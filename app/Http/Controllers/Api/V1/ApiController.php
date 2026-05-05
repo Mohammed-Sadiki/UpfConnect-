@@ -20,7 +20,7 @@ class ApiController extends Controller
 
         if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
-            $token = $user->createToken('uniconnect-mobile')->plainTextToken;
+            $token = $user->createToken('upfconnect-mobile')->plainTextToken;
             
             return response()->json([
                 'success' => true,
@@ -61,15 +61,42 @@ class ApiController extends Controller
         return response()->json(['success' => true, 'data' => $user]);
     }
 
-    public function posts()
+    public function posts(Request $request)
     {
-        $posts = Post::with(['user.profile', 'comments'])->latest()->paginate(10);
+        $user = $request->user();
+
+        // Récupère les IDs des connexions acceptées
+        $connectionIds = $user->connectionsSent()
+            ->where('status', 'accepted')->pluck('receiver_id')
+            ->merge(
+                $user->connectionsReceived()
+                    ->where('status', 'accepted')->pluck('sender_id')
+            );
+
+        $posts = Post::with(['user.profile', 'comments'])
+            ->where(function ($query) use ($user, $connectionIds) {
+                $query
+                    // Posts publics
+                    ->where('visibility', 'public')
+                    // Posts 'university' : accessibles à tous les authentifiés
+                    ->orWhere('visibility', 'university')
+                    // Ses propres posts (toutes visibilités)
+                    ->orWhere('user_id', $user->id)
+                    // Posts privés uniquement de ses connexions
+                    ->orWhere(function ($q) use ($connectionIds) {
+                        $q->where('visibility', 'private')
+                          ->whereIn('user_id', $connectionIds);
+                    });
+            })
+            ->latest()
+            ->paginate(10);
+
         return response()->json([
             'success' => true,
-            'data' => $posts->items(),
+            'data'    => $posts->items(),
             'pagination' => [
                 'current_page' => $posts->currentPage(),
-                'last_page' => $posts->lastPage(),
+                'last_page'    => $posts->lastPage(),
             ]
         ]);
     }

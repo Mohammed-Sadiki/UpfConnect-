@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2">Créer un compte 🎓</h2>
-        <p class="text-sm text-gray-500 mb-6">Rejoignez la communauté universitaire UniConnect</p>
+        <p class="text-sm text-gray-500 mb-6">Rejoignez la communauté universitaire UPFConnect</p>
 
         <form method="POST" action="{{ route('register') }}" class="space-y-4">
             @csrf

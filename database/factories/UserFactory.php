@@ -33,7 +33,6 @@ class UserFactory extends Factory
             'role' => 'student',
             'bio' => fake('fr_FR')->sentence(),
             'department' => fake()->randomElement(['Informatique', 'Mathématiques', 'Physique', 'Biologie', 'Lettres']),
-            'year_of_study' => fake()->numberBetween(1, 5),
             'is_active' => true,
         ];
     }

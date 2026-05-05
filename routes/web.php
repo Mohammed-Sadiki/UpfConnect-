@@ -6,6 +6,7 @@ use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+    // Search
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
 
     // Admin Panel (Protected by role middleware)
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

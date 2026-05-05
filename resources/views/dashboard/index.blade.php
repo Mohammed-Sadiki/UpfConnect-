@@ -40,7 +40,7 @@
                         <div>
                             <a href="{{ route('profile.show', $post->user) }}"
                                class="font-semibold text-gray-900 dark:text-white hover:text-blue-600 transition">{{ $post->user->name }}</a>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->user->bio ?? ($post->user->department ?? 'Membre UniConnect') }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->user->bio ?? ($post->user->department ?? 'Membre UPFConnect') }}</p>
                             <div class="flex items-center space-x-1 text-xs text-gray-400 mt-0.5">
                                 <span>{{ $post->created_at->diffForHumans() }}</span>
                                 <span>•</span>
@@ -92,9 +92,10 @@
 
             <!-- Actions -->
             <div class="px-2 py-1 border-t border-gray-100 dark:border-neutral-800 flex justify-between">
-                <button onclick="likePost({{ $post->id }})"
-                        class="flex-1 flex items-center justify-center space-x-2 text-gray-500 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 rounded-lg py-2 transition font-medium text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                @php $isLiked = $post->likedByUsers->contains('id', auth()->id()); @endphp
+                <button id="like-btn-{{ $post->id }}" onclick="likePost({{ $post->id }})"
+                        class="flex-1 flex items-center justify-center space-x-2 rounded-lg py-2 transition font-medium text-sm {{ $isLiked ? 'text-blue-500 bg-blue-50' : 'text-slate-500 hover:bg-blue-50 hover:text-blue-500' }}">
+                    <svg id="like-icon-{{ $post->id }}" class="w-5 h-5" fill="{{ $isLiked ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
                     <span>J'aime</span>
                 </button>
                 <button onclick="document.getElementById('comments-{{ $post->id }}').classList.toggle('hidden')"
@@ -210,6 +211,15 @@
             .then(data => {
                 if (data.success) {
                     document.getElementById(`likes-count-${postId}`).innerText = data.likes_count;
+                    const btn = document.getElementById(`like-btn-${postId}`);
+                    const icon = document.getElementById(`like-icon-${postId}`);
+                    if (data.liked) {
+                        btn.className = "flex-1 flex items-center justify-center space-x-2 rounded-lg py-2 transition font-medium text-sm text-blue-500 bg-blue-50";
+                        icon.setAttribute('fill', 'currentColor');
+                    } else {
+                        btn.className = "flex-1 flex items-center justify-center space-x-2 rounded-lg py-2 transition font-medium text-sm text-slate-500 hover:bg-blue-50 hover:text-blue-500";
+                        icon.setAttribute('fill', 'none');
+                    }
                 }
             });
         }

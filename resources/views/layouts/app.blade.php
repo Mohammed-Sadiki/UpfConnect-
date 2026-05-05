@@ -4,103 +4,176 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'UniConnect') }}</title>
+    <title>{{ config('app.name', 'UPFConnect') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
-            --upf-blue: #1a3a6b;
-            --upf-red: #c0001d;
-            --upf-gold: #e8a020;
-            --upf-light: #f4f6fb;
-            --upf-dark: #0d1f3c;
+            --upf-neon-blue: #0ea5e9;
+            --upf-neon-purple: #8b5cf6;
+            --upf-light-base: #f0f4f8;
+            --upf-light-surface: rgba(255, 255, 255, 0.7);
+            --upf-glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
-        * { font-family: 'Poppins', sans-serif; }
-        body { background: var(--upf-light); }
-
-        /* Animations */
-        @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes fadeInUp   { from { opacity:0; transform:translateY(20px); }  to { opacity:1; transform:translateY(0); } }
-        @keyframes slideInLeft{ from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:translateX(0); } }
-        @keyframes pulse-glow { 0%,100%{box-shadow:0 0 0 0 rgba(192,0,29,0.3);} 50%{box-shadow:0 0 0 8px rgba(192,0,29,0);} }
-        @keyframes shimmer    { 0%{background-position:-200% 0;} 100%{background-position:200% 0;} }
-
-        .anim-fade-down  { animation: fadeInDown .5s ease both; }
-        .anim-fade-up    { animation: fadeInUp .5s ease both; }
-        .anim-slide-left { animation: slideInLeft .5s ease both; }
-        .anim-delay-1    { animation-delay:.1s; }
-        .anim-delay-2    { animation-delay:.2s; }
-        .anim-delay-3    { animation-delay:.3s; }
-        .anim-delay-4    { animation-delay:.4s; }
+        * { font-family: 'Rajdhani', sans-serif; }
+        body { 
+            background-color: var(--upf-light-base); 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.08), transparent 30%),
+                linear-gradient(to bottom, #ffffff, var(--upf-light-base));
+            background-attachment: fixed;
+            color: var(--text-main); 
+        }
+        h1, h2, h3, h4, h5, h6, .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            color: #0f172a;
+        }
+        
+        /* Glassmorphism Cards */
+        .glass-card, .upf-card { 
+            background: var(--upf-light-surface); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--upf-glass-border);
+            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.05), inset 0 0 15px rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .upf-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-25deg); transition: all 0.7s;
+        }
+        .upf-card:hover::before { left: 200%; }
+        .upf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(14, 165, 233, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.8);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
 
         /* Navbar */
         .upf-navbar {
-            background: linear-gradient(135deg, var(--upf-dark) 0%, var(--upf-blue) 100%);
-            box-shadow: 0 4px 20px rgba(13,31,60,0.4);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--upf-glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
         }
         .upf-navbar .nav-link {
-            color: rgba(255,255,255,0.75);
-            transition: all .25s;
+            color: var(--text-muted);
+            transition: all .3s ease;
             position: relative;
-            padding-bottom: 2px;
+            font-weight: 600;
         }
         .upf-navbar .nav-link::after {
-            content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px;
-            background: var(--upf-gold); transition: width .3s;
+            content:''; position:absolute; bottom:-4px; left:50%; width:0; height:2px;
+            background: var(--upf-neon-blue); transition: all .3s ease; transform: translateX(-50%);
+            box-shadow: 0 0 8px var(--upf-neon-blue);
         }
-        .upf-navbar .nav-link:hover { color:#fff; }
-        .upf-navbar .nav-link:hover::after { width:100%; }
-
-        /* Cards */
-        .upf-card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(26,58,107,0.08);
-            transition: transform .3s, box-shadow .3s;
-            border: 1px solid rgba(26,58,107,0.07);
-        }
-        .upf-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(26,58,107,0.15); }
+        .upf-navbar .nav-link:hover { color: var(--upf-neon-blue); text-shadow: 0 0 5px rgba(14,165,233,0.3); }
+        .upf-navbar .nav-link:hover::after { width:80%; }
+        .nav-active { color: var(--upf-neon-blue) !important; text-shadow: 0 0 5px rgba(14,165,233,0.3); }
+        .nav-active::after { width:80% !important; box-shadow: 0 0 8px var(--upf-neon-blue); }
 
         /* Sidebar profile banner */
         .profile-banner {
-            background: linear-gradient(135deg, var(--upf-blue), var(--upf-dark));
+            background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(139,92,246,0.15));
+            border-bottom: 1px solid rgba(14,165,233,0.2);
+            position: relative;
+        }
+        .profile-banner::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--upf-neon-blue); box-shadow: 0 0 10px var(--upf-neon-blue);
         }
 
         /* Badge notification */
         .notif-badge {
-            background: var(--upf-red);
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
             animation: pulse-glow 2s infinite;
         }
 
         /* Buttons */
         .btn-primary {
-            background: linear-gradient(135deg, var(--upf-blue), #2952a3);
+            background: linear-gradient(135deg, rgba(14,165,233,0.9), rgba(139,92,246,0.9));
+            border: 1px solid var(--upf-neon-blue);
             color: #fff; border-radius: 8px; padding: .55rem 1.25rem;
-            font-weight: 600; font-size:.875rem;
-            transition: all .25s; box-shadow: 0 4px 12px rgba(26,58,107,0.3);
+            font-weight: 600; font-size:1rem; font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: all .3s; box-shadow: 0 4px 15px rgba(14,165,233,0.3);
+            position: relative; overflow: hidden;
         }
-        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(26,58,107,0.4); }
+        .btn-primary:hover { 
+            transform:translateY(-2px); 
+            box-shadow:0 6px 20px rgba(14,165,233,0.5); 
+            background: linear-gradient(135deg, rgba(14,165,233,1), rgba(139,92,246,1));
+            color: #fff;
+        }
         .btn-red {
-            background: linear-gradient(135deg, var(--upf-red), #a0001a);
+            background: linear-gradient(135deg, rgba(239,68,68,0.9), rgba(220,38,38,0.9));
+            border: 1px solid #ef4444;
             color:#fff; border-radius:8px; padding:.55rem 1.25rem;
-            font-weight:600; font-size:.875rem;
-            transition:all .25s; box-shadow:0 4px 12px rgba(192,0,29,0.3);
+            font-weight:600; font-size:.875rem; font-family: 'Orbitron', sans-serif;
+            transition:all .3s; box-shadow:0 4px 15px rgba(239,68,68,0.3);
         }
-        .btn-red:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(192,0,29,0.4); }
+        .btn-red:hover { 
+            transform:translateY(-2px); 
+            box-shadow:0 6px 20px rgba(239,68,68,0.5); 
+            background: linear-gradient(135deg, #ef4444, #dc2626); 
+            color: #fff;
+        }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width:6px; }
-        ::-webkit-scrollbar-track { background:#f1f1f1; }
-        ::-webkit-scrollbar-thumb { background:var(--upf-blue); border-radius:3px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: var(--upf-neon-blue); border-radius:3px; }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); filter: blur(5px); } to { opacity:1; transform:translateY(0); filter: blur(0); } }
+        @keyframes fadeInUp   { from { opacity:0; transform:translateY(20px); filter: blur(5px); }  to { opacity:1; transform:translateY(0); filter: blur(0); } }
+        @keyframes slideInLeft{ from { opacity:0; transform:translateX(-30px); filter: blur(5px); } to { opacity:1; transform:translateX(0); filter: blur(0); } }
+        @keyframes pulse-glow { 0%,100%{box-shadow:0 0 5px rgba(239,68,68,0.5);} 50%{box-shadow:0 0 15px rgba(239,68,68,0.8);} }
+
+        .anim-fade-down  { animation: fadeInDown .5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .anim-fade-up    { animation: fadeInUp .5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .anim-slide-left { animation: slideInLeft .5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .anim-delay-1    { animation-delay:.1s; }
+        .anim-delay-2    { animation-delay:.2s; }
+        .anim-delay-3    { animation-delay:.3s; }
+        .anim-delay-4    { animation-delay:.4s; }
 
         /* Flash toast */
-        .flash-toast { animation: fadeInUp .4s ease; }
+        .flash-toast { animation: fadeInUp .4s ease; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border: 1px solid var(--upf-glass-border); color: var(--text-main); }
 
-        /* Active nav link */
-        .nav-active { color:#fff !important; }
-        .nav-active::after { width:100% !important; }
+        /* Global Theme Overrides for Tailwind classes used */
+        .text-gray-800, .text-gray-900 { color: #0f172a !important; text-shadow: none; }
+        .text-gray-600, .text-gray-500, .text-gray-400 { color: #475569 !important; }
+        .bg-white { background-color: var(--upf-light-surface) !important; }
+        .border-gray-100, .border-gray-50 { border-color: rgba(0,0,0,0.05) !important; }
+        .hover\:bg-blue-50:hover { background-color: rgba(14,165,233,0.1) !important; color: var(--upf-neon-blue) !important; }
+        .hover\:bg-purple-50:hover { background-color: rgba(139,92,246,0.1) !important; color: var(--upf-neon-purple) !important; }
+        .hover\:bg-red-50:hover { background-color: rgba(239,68,68,0.1) !important; color: #ef4444 !important; }
+        
+        .upf-navbar .text-white { color: #0f172a !important; }
+        .upf-navbar .text-white\/50 { color: #64748b !important; }
+        .upf-navbar .bg-white\/10 { background-color: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.1) !important; color: #0f172a !important; }
+        .upf-navbar .hover\:bg-white\/10:hover { background-color: rgba(14,165,233,0.1) !important; color: var(--upf-neon-blue) !important; }
+        .upf-navbar .hover\:bg-white\/20:hover { background-color: rgba(14,165,233,0.1) !important; }
+        .upf-navbar input.text-white { color: #0f172a !important; }
+        .upf-navbar input::placeholder { color: #94a3b8 !important; }
+        
+        /* Make svg in navbar dark */
+        .upf-navbar svg { color: #0f172a; }
+        .nav-link svg { color: inherit; }
+        .upf-navbar .text-white\/70 { color: #475569 !important; }
     </style>
 </head>
 <body class="antialiased">
@@ -114,19 +187,19 @@
                 <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
             </div>
             <div>
-                <span class="text-white font-bold text-lg leading-none">UniConnect</span>
+                <span class="text-white font-bold text-lg leading-none">UPFConnect</span>
                 <span class="block text-xs leading-none" style="color:var(--upf-gold)">Réseau Universitaire</span>
             </div>
         </a>
 
         <!-- Search -->
-        <div class="hidden md:flex flex-1 max-w-sm mx-6">
+        <form action="{{ route('search') }}" method="GET" class="hidden md:flex flex-1 max-w-sm mx-6">
             <div class="relative w-full">
-                <input type="text" placeholder="Rechercher des personnes, posts..."
+                <input type="text" name="q" value="{{ request('q') }}" placeholder="Rechercher des personnes, posts..."
                     class="w-full bg-white/10 text-white placeholder-white/50 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:bg-white/20 transition border border-white/10">
                 <svg class="w-4 h-4 absolute left-3 top-2.5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-        </div>
+        </form>
 
         <!-- Nav Links -->
         <div class="flex items-center space-x-1">
@@ -149,7 +222,9 @@
             <a href="{{ route('notifications.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-white/10 transition relative {{ request()->routeIs('notifications.*') ? 'nav-active' : '' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 <span class="text-[10px] font-medium">Notifs</span>
-                <span class="notif-badge absolute top-0 right-1 w-4 h-4 rounded-full text-white text-[9px] font-bold flex items-center justify-center">3</span>
+                @if(($unreadNotificationsCount ?? 0) > 0)
+                <span class="notif-badge absolute top-0 right-1 w-4 h-4 rounded-full text-white text-[9px] font-bold flex items-center justify-center">{{ $unreadNotificationsCount }}</span>
+                @endif
             </a>
 
             <!-- Profile dropdown -->
@@ -268,39 +343,58 @@
                         À la une
                     </h3>
                     <ul class="space-y-3">
+                        @forelse($sidebarUpcomingEvents ?? [] as $event)
+                        <li class="border-b border-gray-50 pb-3 {{ $loop->last ? 'border-0 pb-0' : '' }}">
+                            <a href="{{ route('events.show', $event) }}" class="text-sm font-medium text-gray-800 hover:text-blue-700 transition leading-tight block">{{ $event->title }}</a>
+                            <p class="text-xs text-gray-400 mt-1">{{ $event->event_date->format('d M Y') }} • {{ $event->registrations_count }} inscrits</p>
+                        </li>
+                        @empty
                         <li class="border-b border-gray-50 pb-3">
-                            <a href="#" class="text-sm font-medium text-gray-800 hover:text-blue-700 transition leading-tight block">Journée portes ouvertes 2026</a>
-                            <p class="text-xs text-gray-400 mt-1">12 450 vues</p>
+                            <span class="text-sm text-gray-500">Aucun événement à venir</span>
                         </li>
-                        <li class="border-b border-gray-50 pb-3">
-                            <a href="#" class="text-sm font-medium text-gray-800 hover:text-blue-700 transition leading-tight block">Nouvelles bourses d'excellence</a>
-                            <p class="text-xs text-gray-400 mt-1">8 300 vues</p>
-                        </li>
-                        <li>
-                            <a href="#" class="text-sm font-medium text-gray-800 hover:text-blue-700 transition leading-tight block">Concours nationaux — Résultats</a>
-                            <p class="text-xs text-gray-400 mt-1">5 120 vues</p>
-                        </li>
+                        @endforelse
                     </ul>
                 </div>
             </div>
+
+            <!-- Trending Posts -->
+            @if(($sidebarTrendingPosts ?? collect())->isNotEmpty())
+            <div class="upf-card overflow-hidden mb-4">
+                <div class="h-2" style="background:linear-gradient(90deg,var(--upf-gold),var(--upf-red))"></div>
+                <div class="p-4">
+                    <h3 class="font-bold text-sm text-gray-800 mb-3 flex items-center">
+                        <svg class="w-4 h-4 mr-2" style="color:var(--upf-gold)" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        Tendances
+                    </h3>
+                    <ul class="space-y-3">
+                        @foreach($sidebarTrendingPosts as $post)
+                        <li class="border-b border-gray-50 pb-3 {{ $loop->last ? 'border-0 pb-0' : '' }}">
+                            <a href="{{ route('dashboard') }}" class="text-sm font-medium text-gray-800 hover:text-blue-700 transition leading-tight block">{{ $post->title ?? Str::limit($post->content, 40) }}</a>
+                            <p class="text-xs text-gray-400 mt-1">{{ $post->likes_count }} likes • {{ $post->user->name }}</p>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            @endif
 
             <!-- Quick stats -->
             <div class="upf-card p-4">
                 <h3 class="font-bold text-sm text-gray-800 mb-3">Votre activité</h3>
                 <div class="grid grid-cols-2 gap-2">
                     <div class="rounded-lg p-3 text-center" style="background:rgba(26,58,107,0.06)">
-                        <div class="font-bold text-lg" style="color:var(--upf-blue)">0</div>
+                        <div class="font-bold text-lg" style="color:var(--upf-blue)">{{ $userConnectionsCount ?? 0 }}</div>
                         <div class="text-xs text-gray-500">Relations</div>
                     </div>
                     <div class="rounded-lg p-3 text-center" style="background:rgba(192,0,29,0.06)">
-                        <div class="font-bold text-lg" style="color:var(--upf-red)">0</div>
+                        <div class="font-bold text-lg" style="color:var(--upf-red)">{{ $userPostsCount ?? 0 }}</div>
                         <div class="text-xs text-gray-500">Posts</div>
                     </div>
                 </div>
             </div>
 
             <footer class="mt-4 text-center text-xs text-gray-400 space-x-2">
-                <span>&copy; 2026 UniConnect</span>
+                <span>&copy; 2026 UPFConnect</span>
                 <span>•</span>
                 <a href="#" class="hover:text-gray-600">Politique</a>
                 <span>•</span>

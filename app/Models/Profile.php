@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Profile extends Model
 {
     protected $fillable = [
-        'user_id', 'linkedin_url', 'github_url', 'cv_path', 'skills', 'interests'
+        'user_id', 'linkedin_url', 'github_url', 'cv_path', 'skills', 'interests', 'year_of_study'
     ];
 
     protected $casts = [

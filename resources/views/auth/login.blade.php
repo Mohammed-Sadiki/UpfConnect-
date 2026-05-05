@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div>
         <h2 class="text-2xl font-bold mb-1" style="color:#1a3a6b">Bienvenue 👋</h2>
-        <p class="text-sm text-gray-500 mb-6">Connectez-vous à votre espace UniConnect</p>
+        <p class="text-sm text-gray-500 mb-6">Connectez-vous à votre espace UPFConnect</p>
 
         @if(session('status'))
         <div class="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">{{ session('status') }}</div>
@@ -13,7 +13,7 @@
                 <label for="email" class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Adresse e-mail</label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition @error('email') border-red-400 @enderror"
-                    placeholder="exemple@uniconnect.edu">
+                    placeholder="exemple@upfconnect.edu">
                 @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
             </div>
 
@@ -51,17 +51,17 @@
         <div class="mt-6 pt-5 border-t border-gray-100">
             <p class="text-[10px] text-center text-gray-400 uppercase tracking-widest font-semibold mb-3">Connexion rapide (démo)</p>
             <div class="grid grid-cols-3 gap-2">
-                <button onclick="setLogin('admin@uniconnect.edu')"
+                <button onclick="setLogin('admin@upfconnect.edu')"
                     class="py-2.5 rounded-xl text-xs font-semibold border-2 transition hover:-translate-y-0.5 transform"
                     style="background:rgba(26,58,107,0.06);border-color:#1a3a6b;color:#1a3a6b">
                     🔐 Admin
                 </button>
-                <button onclick="setLogin('teacher1@uniconnect.edu')"
+                <button onclick="setLogin('teacher1@upfconnect.edu')"
                     class="py-2.5 rounded-xl text-xs font-semibold border-2 transition hover:-translate-y-0.5 transform"
                     style="background:rgba(192,0,29,0.06);border-color:#c0001d;color:#c0001d">
                     👨‍🏫 Enseignant
                 </button>
-                <button onclick="setLogin('student1@uniconnect.edu')"
+                <button onclick="setLogin('student1@upfconnect.edu')"
                     class="py-2.5 rounded-xl text-xs font-semibold border-2 transition hover:-translate-y-0.5 transform"
                     style="background:rgba(232,160,32,0.1);border-color:#e8a020;color:#b07010">
                     🎓 Étudiant

@@ -24,10 +24,10 @@ class DatabaseSeeder extends Seeder
         // 1 Admin
         $admin = User::create([
             'name' => 'Admin System',
-            'email' => 'admin@uniconnect.edu',
+            'email' => 'admin@upfconnect.edu',
             'password' => $password,
             'role' => 'admin',
-            'bio' => 'Administrateur système de la plateforme UniConnect.',
+            'bio' => 'Administrateur système de la plateforme UPFConnect.',
             'department' => 'IT',
             'email_verified_at' => now(),
         ]);
@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
         for ($i = 1; $i <= 5; $i++) {
             $teacher = User::create([
                 'name' => "Prof. " . $faker->lastName,
-                'email' => "teacher$i@uniconnect.edu",
+                'email' => "teacher$i@upfconnect.edu",
                 'password' => $password,
                 'role' => 'teacher',
                 'bio' => $faker->realText(100),
@@ -63,19 +63,19 @@ class DatabaseSeeder extends Seeder
         for ($i = 1; $i <= 30; $i++) {
             $student = User::create([
                 'name' => $faker->firstName . ' ' . $faker->lastName,
-                'email' => "student$i@uniconnect.edu",
+                'email' => "student$i@upfconnect.edu",
                 'password' => $password,
                 'role' => 'student',
                 'bio' => $faker->realText(80),
                 'department' => $faker->randomElement(['Informatique', 'Mathématiques', 'Physique', 'Biologie', 'Lettres']),
-                'year_of_study' => $faker->numberBetween(1, 5),
                 'email_verified_at' => now(),
             ]);
             Profile::create([
                 'user_id' => $student->id,
                 'github_url' => 'https://github.com/' . $faker->userName,
                 'skills' => ['PHP', 'HTML', 'CSS', 'JavaScript'],
-                'interests' => ['Web Dev', 'IA', 'Sports']
+                'interests' => ['Web Dev', 'IA', 'Sports'],
+                'year_of_study' => $faker->numberBetween(1, 5)
             ]);
             $students[] = $student;
         }

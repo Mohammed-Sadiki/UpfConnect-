@@ -24,7 +24,7 @@ class PostController extends Controller
                     ->where('status', 'accepted')->pluck('sender_id')
             );
 
-        $posts = Post::with(['user', 'comments.user'])
+        $posts = Post::with(['user', 'comments.user', 'likedByUsers'])
             ->where(function ($query) use ($user, $connectionIds) {
                 $query->whereIn('user_id', $connectionIds)
                       ->orWhere('user_id', $user->id)
@@ -117,26 +117,43 @@ class PostController extends Controller
     }
 
     /**
-     * AJAX: Like a post.
+     * AJAX: Toggle le like d'un post (1 like max par utilisateur).
      */
     public function like(Post $post)
     {
-        $post->increment('likes_count');
+        $user = auth()->user();
 
-        if ($post->user_id !== auth()->id()) {
-            \App\Models\Notification::create([
-                'user_id' => $post->user_id,
-                'type'    => 'new_like',
-                'data'    => [
-                    'message' => auth()->user()->name . ' a aimé votre post.',
-                    'post_id' => $post->id,
-                ],
-            ]);
+        // Vérifie si l'utilisateur a déjà liké ce post
+        $alreadyLiked = $post->likedByUsers()->where('user_id', $user->id)->exists();
+
+        if ($alreadyLiked) {
+            // Unlike : on retire le like
+            $post->likedByUsers()->detach($user->id);
+            $post->decrement('likes_count');
+            $liked = false;
+        } else {
+            // Like : on ajoute le like
+            $post->likedByUsers()->attach($user->id);
+            $post->increment('likes_count');
+            $liked = true;
+
+            // Notification uniquement si c'est un nouveau like et pas son propre post
+            if ($post->user_id !== $user->id) {
+                \App\Models\Notification::create([
+                    'user_id' => $post->user_id,
+                    'type'    => 'new_like',
+                    'data'    => [
+                        'message' => $user->name . ' a aimé votre post.',
+                        'post_id' => $post->id,
+                    ],
+                ]);
+            }
         }
 
         return response()->json([
             'success'     => true,
-            'likes_count' => $post->likes_count,
+            'liked'       => $liked,
+            'likes_count' => $post->fresh()->likes_count,
         ]);
     }
 

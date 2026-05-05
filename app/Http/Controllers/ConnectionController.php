@@ -40,20 +40,23 @@ class ConnectionController extends Controller
             return back()->with('error', 'Vous ne pouvez pas vous connecter à vous-même.');
         }
 
-        Connection::firstOrCreate([
+        $connection = Connection::firstOrCreate([
             'sender_id' => auth()->id(),
             'receiver_id' => $user->id,
         ]);
         
-        \App\Models\Notification::create([
-            'user_id' => $user->id,
-            'type' => 'connection_request',
-            'data' => [
-                'message' => auth()->user()->name . ' a envoyé une demande de connexion.'
-            ]
-        ]);
+        if ($connection->wasRecentlyCreated) {
+            \App\Models\Notification::create([
+                'user_id' => $user->id,
+                'type' => 'connection_request',
+                'data' => [
+                    'message' => auth()->user()->name . ' a envoyé une demande de connexion.'
+                ]
+            ]);
+            return back()->with('success', 'Demande de connexion envoyée.');
+        }
 
-        return back()->with('success', 'Demande de connexion envoyée.');
+        return back()->with('info', 'Demande de connexion déjà envoyée.');
     }
 
     public function accept(Connection $connection)
