@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Search
     Route::get('/search', [SearchController::class, 'search'])->name('search');
+    Route::get('/suggestions/profiles', [SearchController::class, 'profileSuggestions'])->name('suggestions.profiles');
 
     // Admin Panel (Protected by role middleware)
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

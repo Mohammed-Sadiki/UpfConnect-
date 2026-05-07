@@ -63,4 +63,60 @@ class SearchController extends Controller
 
         return view('search.results', compact('query', 'users', 'posts', 'events'));
     }
+
+    /**
+     * Affiche les suggestions de profil basées sur les connexions en commun
+     */
+    public function profileSuggestions(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Récupérer les connexions acceptées de l'utilisateur
+        $userConnections = $user->connectionsSent()
+            ->where('status', 'accepted')
+            ->pluck('receiver_id')
+            ->merge(
+                $user->connectionsReceived()
+                    ->where('status', 'accepted')
+                    ->pluck('sender_id')
+            );
+
+        // Récupérer les utilisateurs qui ne sont pas déjà connectés
+        $potentialSuggestions = User::where('is_active', true)
+            ->where('id', '!=', $user->id)
+            ->whereNotIn('id', $userConnections)
+            ->get();
+
+        // Calculer le nombre de connexions en commun pour chaque utilisateur potentiel
+        $suggestions = $potentialSuggestions->map(function ($suggestedUser) use ($userConnections) {
+            // Récupérer les connexions du suggéré
+            $suggestedConnections = $suggestedUser->connectionsSent()
+                ->where('status', 'accepted')
+                ->pluck('receiver_id')
+                ->merge(
+                    $suggestedUser->connectionsReceived()
+                        ->where('status', 'accepted')
+                        ->pluck('sender_id')
+                );
+
+            // Compter les connexions en commun
+            $commonConnections = $userConnections->intersect($suggestedConnections)->count();
+
+            return [
+                'user' => $suggestedUser,
+                'common_connections_count' => $commonConnections,
+                'common_connections' => User::whereIn('id', $userConnections->intersect($suggestedConnections))
+                    ->limit(3)
+                    ->get()
+            ];
+        })
+        ->filter(function ($suggestion) {
+            return $suggestion['common_connections_count'] > 0;
+        })
+        ->sortByDesc('common_connections_count')
+        ->take(10)
+        ->values();
+
+        return view('suggestions.profiles', compact('suggestions'));
+    }
 }

@@ -24,3 +24,9 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+ROADMAP.md
+TEST_REPORT.md
+TEST_SUMMARY.md
+fix_php_warning.md
+php.ini
+verify.php

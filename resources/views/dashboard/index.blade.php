@@ -148,6 +148,80 @@
         <div class="mt-4">{{ $posts->links() }}</div>
     </div>
 
+    <!-- Suggestions de profil -->
+    @if(isset($profileSuggestions) && $profileSuggestions->count() > 0)
+    <div class="glass-card rounded-xl p-6 shadow-sm mt-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <i class="fas fa-users text-green-500 mr-2"></i>
+                Suggestions de profil
+            </h3>
+            <a href="{{ route('suggestions.profiles') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                Voir tout →
+            </a>
+        </div>
+        
+        <div class="space-y-3">
+            @foreach($profileSuggestions->take(3) as $suggestion)
+            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-neutral-800 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 transition">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        @if($suggestion['user']->avatar)
+                            <img src="{{ Storage::url($suggestion['user']->avatar) }}" 
+                                 alt="{{ $suggestion['user']->name }}" 
+                                 class="w-10 h-10 rounded-full object-cover">
+                        @else
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                                <span class="text-white text-sm font-bold">
+                                    {{ substr($suggestion['user']->name, 0, 1) }}
+                                </span>
+                            </div>
+                        @endif
+                        
+                        <!-- Badge de connexions en commun -->
+                        <div class="absolute -bottom-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            {{ $suggestion['common_connections_count'] }}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 dark:text-white">
+                            {{ $suggestion['user']->name }}
+                        </h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ $suggestion['common_connections_count'] }} 
+                            {{ $suggestion['common_connections_count'] > 1 ? 'connexions en commun' : 'connexion en commun' }}
+                        </p>
+                        @if($suggestion['user']->department)
+                            <p class="text-xs text-gray-400">{{ $suggestion['user']->department }}</p>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <a href="{{ route('profile.show', $suggestion['user']->id) }}" 
+                       class="text-gray-600 hover:text-blue-600 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </a>
+                    
+                    <form method="POST" action="{{ route('connections.request', $suggestion['user']->id) }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-blue-600 hover:text-blue-800 transition" title="Se connecter">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- Post Creation Modal -->
     <div id="post-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
         <div class="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">

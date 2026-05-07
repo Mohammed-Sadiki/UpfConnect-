@@ -51,12 +51,51 @@ class AppServiceProvider extends ServiceProvider
                     ->take(3)
                     ->get();
 
+                // Suggestions de profil (connexions en commun)
+                $userConnections = $user->connectionsSent()
+                    ->where('status', 'accepted')
+                    ->pluck('receiver_id')
+                    ->merge(
+                        $user->connectionsReceived()
+                            ->where('status', 'accepted')
+                            ->pluck('sender_id')
+                    );
+
+                $profileSuggestions = \App\Models\User::where('is_active', true)
+                    ->where('id', '!=', $user->id)
+                    ->whereNotIn('id', $userConnections)
+                    ->get()
+                    ->map(function ($suggestedUser) use ($userConnections) {
+                        $suggestedConnections = $suggestedUser->connectionsSent()
+                            ->where('status', 'accepted')
+                            ->pluck('receiver_id')
+                            ->merge(
+                                $suggestedUser->connectionsReceived()
+                                    ->where('status', 'accepted')
+                                    ->pluck('sender_id')
+                            );
+
+                        $commonConnections = $userConnections->intersect($suggestedConnections)->count();
+
+                        return [
+                            'user' => $suggestedUser,
+                            'common_connections_count' => $commonConnections,
+                        ];
+                    })
+                    ->filter(function ($suggestion) {
+                        return $suggestion['common_connections_count'] > 0;
+                    })
+                    ->sortByDesc('common_connections_count')
+                    ->take(5)
+                    ->values();
+
                 $view->with([
                     'userConnectionsCount' => $connectionsCount,
                     'userPostsCount' => $postsCount,
                     'unreadNotificationsCount' => $unreadNotificationsCount,
                     'sidebarUpcomingEvents' => $upcomingEvents,
                     'sidebarTrendingPosts' => $trendingPosts,
+                    'profileSuggestions' => $profileSuggestions,
                 ]);
             }
         });
