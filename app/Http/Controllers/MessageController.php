@@ -11,36 +11,67 @@ class MessageController extends Controller
     public function index()
     {
         $user = auth()->user();
-        
-        // Find latest messages for each conversation
-        $messages = Message::where('sender_id', $user->id)
-            ->orWhere('receiver_id', $user->id)
-            ->latest()
-            ->get()
-            ->unique(function ($item) use ($user) {
-                return $item->sender_id == $user->id ? $item->receiver_id : $item->sender_id;
-            });
-            
+        $userId = $user->id;
+
+        // Get all messages where user is sender or receiver, ordered by latest first
+        $allMessages = Message::where(function($q) use ($userId) {
+                $q->where('sender_id', $userId)
+                  ->orWhere('receiver_id', $userId);
+            })
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Group by conversation partner and keep only the latest message for each
+        $conversations = [];
+        foreach ($allMessages as $message) {
+            // Determine the other person in the conversation
+            $otherId = ($message->sender_id === $userId) ? $message->receiver_id : $message->sender_id;
+
+            // Only add if we haven't seen this conversation partner yet
+            // (since we ordered by created_at desc, first one is the latest)
+            if (!isset($conversations[$otherId])) {
+                $conversations[$otherId] = $message;
+            }
+        }
+
+        // Convert to collection and sort by latest message date
+        $messages = collect($conversations)->sortByDesc('created_at')->values();
+
         return view('messages.index', compact('messages'));
     }
 
     public function show(User $user)
     {
         $authId = auth()->id();
-        
+
         // Mark as read
         Message::where('sender_id', $user->id)
             ->where('receiver_id', $authId)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
+        // Get conversation messages for current chat
         $messages = Message::where(function($q) use ($authId, $user) {
                 $q->where('sender_id', $authId)->where('receiver_id', $user->id);
-            })->orWhere(function($q) use ($authId, $user) {
+            })
+            ->orWhere(function($q) use ($authId, $user) {
                 $q->where('sender_id', $user->id)->where('receiver_id', $authId);
-            })->orderBy('created_at', 'asc')->get();
+            })
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-        return view('messages.show', compact('messages', 'user'));
+        // Get all messages for sidebar conversation list
+        $allMessages = Message::where(function($q) use ($authId) {
+                $q->where('sender_id', $authId)
+                  ->orWhere('receiver_id', $authId);
+            })
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('messages.show', compact('messages', 'user', 'allMessages'));
     }
 
     public function store(Request $request, User $user)
