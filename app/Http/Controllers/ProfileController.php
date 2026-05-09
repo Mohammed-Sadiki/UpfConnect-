@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +38,7 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|image|max:2048',
+            'avatar' => 'nullable|image|max:5120', // 5MB max
             'linkedin_url' => 'nullable|url',
             'github_url' => 'nullable|url',
             'cv' => 'nullable|file|mimes:pdf|max:5120',
@@ -50,10 +51,15 @@ class ProfileController extends Controller
         $user->bio = $request->bio;
         
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+            try {
+                // Supprimer l'ancien avatar
+                ImageUploadService::delete($user->avatar);
+                
+                // Upload et redimensionner (300x300 carré)
+                $user->avatar = ImageUploadService::uploadAvatar($request->file('avatar'), 300);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Erreur lors de l\'upload de l\'avatar: ' . $e->getMessage());
             }
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
         }
         $user->save();
 

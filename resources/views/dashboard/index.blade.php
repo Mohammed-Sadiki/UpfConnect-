@@ -6,18 +6,18 @@
                  src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                  alt="Avatar">
             <button onclick="document.getElementById('post-modal').classList.remove('hidden')"
-                    class="flex-1 text-left bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-700 transition rounded-full px-5 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    class="flex-1 text-left bg-gray-100 hover:bg-gray-200 transition rounded-full px-5 py-3 text-sm text-gray-500 font-medium">
                 Commencer un post...
             </button>
         </div>
-        <div class="flex justify-around mt-3 pt-2 border-t border-gray-100 dark:border-neutral-800">
+        <div class="flex justify-around mt-3 pt-2 border-t border-gray-100">
             <button onclick="document.getElementById('post-modal').classList.remove('hidden')"
-                    class="flex items-center space-x-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-800 px-4 py-2 rounded-lg transition text-sm font-semibold">
+                    class="flex items-center space-x-2 text-gray-500 hover:bg-gray-100 px-4 py-2 rounded-lg transition text-sm font-semibold">
                 <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg>
                 <span>Média</span>
             </button>
             <a href="{{ route('events.index') }}"
-               class="flex items-center space-x-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-800 px-4 py-2 rounded-lg transition text-sm font-semibold">
+               class="flex items-center space-x-2 text-gray-500 hover:bg-gray-100 px-4 py-2 rounded-lg transition text-sm font-semibold">
                 <svg class="w-5 h-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
                 <span>Événement</span>
             </a>
@@ -33,14 +33,14 @@
                 <div class="flex items-start justify-between">
                     <div class="flex items-center space-x-3">
                         <a href="{{ route('profile.show', $post->user) }}">
-                            <img class="h-12 w-12 rounded-full object-cover ring-2 ring-gray-100 dark:ring-neutral-800"
+                            <img class="h-12 w-12 rounded-full object-cover ring-2 ring-gray-100"
                                  src="{{ $post->user->avatar ? asset('storage/'.$post->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($post->user->name).'&background=3b82f6&color=fff' }}"
                                  alt="">
                         </a>
                         <div>
                             <a href="{{ route('profile.show', $post->user) }}"
-                               class="font-semibold text-gray-900 dark:text-white hover:text-blue-600 transition">{{ $post->user->name }}</a>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->user->bio ?? ($post->user->department ?? 'Membre UPFConnect') }}</p>
+                               class="font-semibold text-gray-900 hover:text-blue-600 transition">{{ $post->user->name }}</a>
+                            <p class="text-xs text-gray-500">{{ $post->user->bio ?? ($post->user->department ?? 'Membre UPFConnect') }}</p>
                             <div class="flex items-center space-x-1 text-xs text-gray-400 mt-0.5">
                                 <span>{{ $post->created_at->diffForHumans() }}</span>
                                 <span>•</span>
@@ -57,10 +57,10 @@
                         <button @click="open = !open" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                         </button>
-                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-40 bg-white dark:bg-neutral-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
                             <form action="{{ route('posts.destroy', $post) }}" method="POST">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-neutral-700">Supprimer</button>
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</button>
                             </form>
                         </div>
                     </div>
@@ -69,11 +69,13 @@
 
                 <!-- Post Content -->
                 @if($post->title)
-                <h3 class="mt-3 font-semibold text-gray-900 dark:text-white">{{ $post->title }}</h3>
+                <h3 class="mt-3 font-semibold text-gray-900">{{ $post->title }}</h3>
                 @endif
-                <div class="mt-2 text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+                @if($post->content)
+                <div class="mt-2 text-sm text-gray-800 leading-relaxed">
                     <p>{!! nl2br(e($post->content)) !!}</p>
                 </div>
+                @endif
             </div>
 
             @if($post->image)
@@ -82,7 +84,7 @@
             @endif
 
             <!-- Stats -->
-            <div class="px-4 py-2 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between">
+            <div class="px-4 py-2 border-t border-gray-100 flex items-center justify-between">
                 <div class="flex items-center space-x-1 text-xs text-gray-500">
                     <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 text-white text-[10px]">👍</span>
                     <span id="likes-count-{{ $post->id }}">{{ $post->likes_count }}</span>
@@ -91,7 +93,7 @@
             </div>
 
             <!-- Actions -->
-            <div class="px-2 py-1 border-t border-gray-100 dark:border-neutral-800 flex justify-between">
+            <div class="px-2 py-1 border-t border-gray-100 flex justify-between">
                 @php $isLiked = $post->likedByUsers->contains('id', auth()->id()); @endphp
                 <button id="like-btn-{{ $post->id }}" onclick="likePost({{ $post->id }})"
                         class="flex-1 flex items-center justify-center space-x-2 rounded-lg py-2 transition font-medium text-sm {{ $isLiked ? 'text-blue-500 bg-blue-50' : 'text-slate-500 hover:bg-blue-50 hover:text-blue-500' }}">
@@ -99,14 +101,14 @@
                     <span>J'aime</span>
                 </button>
                 <button onclick="document.getElementById('comments-{{ $post->id }}').classList.toggle('hidden')"
-                        class="flex-1 flex items-center justify-center space-x-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-neutral-800 rounded-lg py-2 transition font-medium text-sm">
+                        class="flex-1 flex items-center justify-center space-x-2 text-gray-500 hover:bg-gray-50 rounded-lg py-2 transition font-medium text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     <span>Commenter</span>
                 </button>
             </div>
 
             <!-- Comments Section -->
-            <div id="comments-{{ $post->id }}" class="hidden border-t border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-800/50">
+            <div id="comments-{{ $post->id }}" class="hidden border-t border-gray-100 bg-gray-50">
                 <div class="px-4 pt-3 pb-2">
                     <form action="{{ route('posts.comment', $post) }}" method="POST" class="flex space-x-2">
                         @csrf
@@ -114,7 +116,7 @@
                              src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                              alt="">
                         <input type="text" name="content" required placeholder="Ajouter un commentaire..."
-                               class="flex-1 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-full px-4 text-sm focus:outline-none focus:border-blue-500 dark:text-white">
+                               class="flex-1 bg-white border border-gray-200 rounded-full px-4 text-sm focus:outline-none focus:border-blue-500">
                         <button type="submit" class="text-blue-600 font-semibold text-sm px-2 hover:text-blue-800 transition">Publier</button>
                     </form>
                 </div>
@@ -124,13 +126,13 @@
                         <img class="h-8 w-8 rounded-full object-cover flex-shrink-0 mt-1"
                              src="{{ $comment->user->avatar ? asset('storage/'.$comment->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($comment->user->name).'&background=3b82f6&color=fff' }}"
                              alt="">
-                        <div class="bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-700 px-3 py-2 rounded-2xl flex-1">
+                        <div class="bg-white border border-gray-100 px-3 py-2 rounded-2xl flex-1">
                             <div class="flex justify-between items-start">
                                 <a href="{{ route('profile.show', $comment->user) }}"
-                                   class="font-semibold text-xs dark:text-white hover:text-blue-600">{{ $comment->user->name }}</a>
+                                   class="font-semibold text-xs text-gray-900 hover:text-blue-600">{{ $comment->user->name }}</a>
                                 <span class="text-[10px] text-gray-400">{{ $comment->created_at->diffForHumans() }}</span>
                             </div>
-                            <p class="text-sm mt-0.5 text-gray-800 dark:text-gray-200">{{ $comment->content }}</p>
+                            <p class="text-sm mt-0.5 text-gray-800">{{ $comment->content }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -139,7 +141,7 @@
         </div>
         @empty
         <div class="glass-card rounded-xl p-10 text-center text-gray-500 shadow-sm">
-            <svg class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
             <p class="font-medium text-lg">Votre fil est vide</p>
             <p class="text-sm mt-1">Connectez-vous à des personnes ou créez votre premier post !</p>
         </div>
@@ -223,12 +225,13 @@
     @endif
 
     <!-- Post Creation Modal -->
-    <div id="post-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 dark:border-neutral-800 flex justify-between items-center">
-                <h3 class="text-lg font-bold dark:text-white">Créer un post</h3>
+    <div id="post-modal" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm overflow-y-auto">
+        <div class="flex justify-center pt-10 pb-4 min-h-full">
+            <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden h-fit">
+            <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-900">Créer un post</h3>
                 <button onclick="document.getElementById('post-modal').classList.add('hidden')"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full p-1.5 transition">
+                        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-1.5 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -239,9 +242,9 @@
                          src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                          alt="">
                     <div>
-                        <span class="font-semibold dark:text-white">{{ auth()->user()->name }}</span>
+                        <span class="font-semibold text-gray-900">{{ auth()->user()->name }}</span>
                         <div class="mt-1">
-                            <select name="visibility" class="text-xs border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white rounded-full px-3 py-1 focus:outline-none focus:border-blue-500">
+                            <select name="visibility" class="text-xs border border-gray-300 bg-white text-gray-700 rounded-full px-3 py-1 focus:outline-none focus:border-blue-500">
                                 <option value="public">🌍 Tout le monde</option>
                                 <option value="university">🎓 Mon université</option>
                                 <option value="private">🔒 Privé</option>
@@ -250,18 +253,21 @@
                     </div>
                 </div>
                 <input type="text" name="title" placeholder="Titre (optionnel)"
-                       class="w-full border-0 border-b border-gray-100 dark:border-neutral-800 focus:ring-0 focus:border-blue-300 text-base font-medium dark:bg-neutral-900 dark:text-white mb-2 pb-2">
-                <textarea name="content" rows="5" required placeholder="De quoi souhaitez-vous parler ?"
-                          class="w-full border-0 focus:ring-0 resize-none text-sm dark:bg-neutral-900 dark:text-white leading-relaxed"></textarea>
-                <div id="image-preview" class="hidden mt-2 rounded-xl overflow-hidden">
-                    <img id="preview-img" src="" class="max-h-48 w-full object-cover">
+                       class="w-full border-0 border-b border-gray-100 focus:ring-0 focus:border-blue-300 text-base font-medium text-gray-900 bg-transparent mb-2 pb-2 placeholder-gray-400">
+                <textarea name="content" rows="3" placeholder="De quoi souhaitez-vous parler ? (optionnel si vous ajoutez une image)"
+                          class="w-full border-0 focus:ring-0 resize-none text-sm text-gray-800 bg-transparent leading-relaxed placeholder-gray-400"></textarea>
+                <div id="image-preview" class="hidden mt-3 rounded-xl overflow-hidden border border-gray-200 relative">
+                    <img id="preview-img" src="" class="max-h-60 w-full object-cover">
+                    <button type="button" onclick="removeImage()" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition" title="Supprimer l'image">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
-                <div class="border-t border-gray-100 dark:border-neutral-800 pt-4 mt-2 flex justify-between items-center">
+                <div class="border-t border-gray-100 pt-4 mt-2 flex justify-between items-center">
                     <label class="cursor-pointer flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition text-sm font-medium">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg>
                         <span>Ajouter une image</span>
-                        <input type="file" name="image" class="hidden" accept="image/*"
-                               onchange="if(this.files[0]){document.getElementById('preview-img').src=URL.createObjectURL(this.files[0]);document.getElementById('image-preview').classList.remove('hidden');}">
+                        <input type="file" name="image" id="post-image-input" class="hidden" accept="image/*"
+                               onchange="previewImage(this)">
                     </label>
                     <button type="submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-full transition shadow-sm">
@@ -269,10 +275,44 @@
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
     <script>
+        let selectedImageFile = null;
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                selectedImageFile = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview-img').src = e.target.result;
+                    document.getElementById('image-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeImage() {
+            selectedImageFile = null;
+            document.getElementById('preview-img').src = '';
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('post-image-input').value = '';
+        }
+
+        // Form validation
+        document.querySelector('form[action="{{ route('posts.store') }}"]').addEventListener('submit', function(e) {
+            const content = this.querySelector('textarea[name="content"]').value.trim();
+            const imageInput = this.querySelector('input[name="image"]');
+            
+            if (!content && !imageInput.files[0]) {
+                e.preventDefault();
+                alert('Veuillez ajouter du texte ou une image au post.');
+                return false;
+            }
+        });
+
         function likePost(postId) {
             fetch(`/posts/${postId}/like`, {
                 method: 'POST',

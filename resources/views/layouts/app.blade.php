@@ -293,9 +293,52 @@
 
 <!-- MAIN CONTENT -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
+    @php
+        $isAdminPage = request()->routeIs('admin.*');
+    @endphp
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
         <!-- LEFT SIDEBAR -->
+        @if($isAdminPage)
+        <!-- Admin Sidebar with Quick Actions -->
+        <div class="hidden lg:block lg:col-span-1 anim-slide-left">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-4">
+                    <h3 class="text-white font-semibold flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        ⚡ Actions Rapides
+                    </h3>
+                </div>
+                <div class="p-4 space-y-2">
+                    <a href="{{ route('admin.users') }}" class="flex items-center space-x-3 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition p-3 rounded-lg {{ request()->routeIs('admin.users') ? 'bg-blue-50 text-blue-600' : '' }}">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        </div>
+                        <span class="font-medium">👥 Utilisateurs</span>
+                    </a>
+                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 text-sm text-gray-700 hover:text-green-600 hover:bg-green-50 transition p-3 rounded-lg">
+                        <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        </div>
+                        <span class="font-medium">🏠 Retour au site</span>
+                    </a>
+                    <a href="{{ route('posts.index') }}" class="flex items-center space-x-3 text-sm text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition p-3 rounded-lg">
+                        <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                        </div>
+                        <span class="font-medium">📝 Posts</span>
+                    </a>
+                    <a href="{{ route('events.index') }}" class="flex items-center space-x-3 text-sm text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition p-3 rounded-lg">
+                        <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <span class="font-medium">📅 Événements</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @else
+        <!-- Regular User Sidebar -->
         <div class="hidden lg:block lg:col-span-1 anim-slide-left">
             <div class="upf-card overflow-hidden sticky top-24">
                 <div class="profile-banner h-20 relative">
@@ -330,13 +373,15 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- CENTER CONTENT -->
-        <div class="lg:col-span-2 anim-fade-up">
+        <div class="{{ $isAdminPage ? 'lg:col-span-3' : 'lg:col-span-2' }} anim-fade-up">
             {{ $slot }}
         </div>
 
-        <!-- RIGHT SIDEBAR -->
+        <!-- RIGHT SIDEBAR - Hidden on admin pages -->
+        @if(!$isAdminPage)
         <div class="hidden lg:block lg:col-span-1 anim-fade-up anim-delay-2">
             <!-- University banner -->
             <div class="upf-card overflow-hidden mb-4">
@@ -405,6 +450,7 @@
                 <a href="#" class="hover:text-gray-600">Aide</a>
             </footer>
         </div>
+        @endif
     </div>
 </main>
 </body>

@@ -12,23 +12,29 @@ class ConnectionController extends Controller
     {
         $user = auth()->user();
         
+        // Pagination pour les demandes en attente (max 50)
         $pendingRequests = Connection::with('sender')
             ->where('receiver_id', $user->id)
             ->where('status', 'pending')
+            ->limit(50)
             ->get();
             
+        // Pagination pour les connexions (max 100)
         $connections = Connection::with(['sender', 'receiver'])
             ->where(function($q) use ($user) {
                 $q->where('sender_id', $user->id)->orWhere('receiver_id', $user->id);
             })
             ->where('status', 'accepted')
+            ->limit(100)
             ->get();
             
-        // Suggestions based on department
-        $suggestions = User::where('department', $user->department)
+        // Suggestions limitées à 10 maximum avec eager loading
+        $suggestions = User::with(['connectionsSent', 'connectionsReceived'])
+            ->where('department', $user->department)
             ->where('id', '!=', $user->id)
+            ->where('is_active', true)
             ->inRandomOrder()
-            ->take(5)
+            ->limit(10)
             ->get();
 
         return view('connections.index', compact('pendingRequests', 'connections', 'suggestions'));
