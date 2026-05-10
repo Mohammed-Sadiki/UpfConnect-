@@ -87,4 +87,32 @@ class User extends Authenticatable
     {
         return $this->hasMany(Connection::class, 'receiver_id');
     }
+
+    // Groups relations
+    public function groupMemberships(): HasMany
+    {
+        return $this->hasMany(GroupMembership::class);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_memberships')
+            ->withPivot('role', 'status', 'joined_at')
+            ->withTimestamps();
+    }
+
+    public function ownedGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'created_by');
+    }
+
+    /**
+     * Groupes où l'utilisateur est membre approuvé
+     */
+    public function approvedGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_memberships')
+            ->wherePivot('status', 'approved')
+            ->withPivot('role', 'joined_at');
+    }
 }

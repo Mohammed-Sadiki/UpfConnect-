@@ -158,5 +158,8 @@ class DatabaseSeeder extends Seeder
                 'read_at' => $faker->boolean(50) ? now() : null,
             ]);
         }
+
+        // Groups
+        $this->call(GroupSeeder::class);
     }
 }

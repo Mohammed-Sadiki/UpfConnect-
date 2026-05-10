@@ -7,6 +7,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Search
     Route::get('/search', [SearchController::class, 'search'])->name('search');
     Route::get('/suggestions/profiles', [SearchController::class, 'profileSuggestions'])->name('suggestions.profiles');
+
+    // Groups
+    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::get('/groups/create', [GroupController::class, 'create'])->name('groups.create');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::get('/groups/suggestions', [GroupController::class, 'suggestions'])->name('groups.suggestions');
+    Route::get('/groups/{group}', [GroupController::class, 'show'])->name('groups.show');
+    Route::get('/groups/{group}/edit', [GroupController::class, 'edit'])->name('groups.edit');
+    Route::patch('/groups/{group}', [GroupController::class, 'update'])->name('groups.update');
+    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
+    Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
+    Route::post('/groups/{group}/leave', [GroupController::class, 'leave'])->name('groups.leave');
+    Route::get('/groups/{group}/members', [GroupController::class, 'members'])->name('groups.members');
+    Route::post('/groups/{group}/members/{membership}/approve', [GroupController::class, 'approveMember'])->name('groups.members.approve');
+    Route::post('/groups/{group}/members/{membership}/reject', [GroupController::class, 'rejectMember'])->name('groups.members.reject');
+    Route::patch('/groups/{group}/members/{membership}/role', [GroupController::class, 'updateMemberRole'])->name('groups.members.role');
+    Route::delete('/groups/{group}/members/{membership}', [GroupController::class, 'removeMember'])->name('groups.members.remove');
 
     // Admin Panel (Protected by role middleware)
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

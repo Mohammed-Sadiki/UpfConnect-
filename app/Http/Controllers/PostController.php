@@ -65,11 +65,20 @@ class PostController extends Controller
             'title'      => 'nullable|string|max:255',
             'visibility' => 'required|in:public,university,private',
             'image'      => 'nullable|image|max:10240', // 10MB max
+            'group_id'   => 'nullable|exists:groups,id',
         ]);
 
         // At least content or image must be present
         if (empty($request->content) && !$request->hasFile('image')) {
             return back()->with('error', 'Veuillez ajouter du texte ou une image au post.')->withInput();
+        }
+
+        // Vérifier si l'utilisateur peut poster dans le groupe
+        if ($request->filled('group_id')) {
+            $group = \App\Models\Group::find($request->group_id);
+            if (!$group || !$group->isMember(auth()->user())) {
+                return back()->with('error', 'Vous devez être membre du groupe pour publier.')->withInput();
+            }
         }
 
         $imagePath = null;
@@ -86,13 +95,25 @@ class PostController extends Controller
             }
         }
 
-        Post::create([
+        $post = Post::create([
             'user_id'    => auth()->id(),
+            'group_id'   => $request->group_id,
             'title'      => $request->title,
             'content'    => $request->content ?? '', // Empty string if null
             'visibility' => $request->visibility,
             'image'      => $imagePath,
         ]);
+
+        // Incrémenter le compteur de posts du groupe
+        if ($request->filled('group_id')) {
+            $group->increment('posts_count');
+        }
+
+        // Redirection vers le groupe si post dans un groupe
+        if ($request->filled('group_id')) {
+            return redirect()->route('groups.show', $request->group_id)
+                ->with('success', '✅ Post publié dans le groupe avec succès');
+        }
 
         return back()->with('success', '✅ Post publié avec succès');
     }
@@ -124,10 +145,17 @@ class PostController extends Controller
     {
         $this->authorize('delete', $post);
 
+        $group = $post->group;
+
         if ($post->image && !str_starts_with($post->image, 'http')) {
             Storage::disk('public')->delete($post->image);
         }
         $post->delete();
+
+        // Décrémenter compteur de posts du groupe
+        if ($group) {
+            $group->decrement('posts_count');
+        }
 
         return back()->with('success', '✅ Post supprimé avec succès');
     }

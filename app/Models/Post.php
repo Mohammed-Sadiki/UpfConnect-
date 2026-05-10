@@ -10,12 +10,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Post extends Model
 {
     protected $fillable = [
-        'user_id', 'title', 'content', 'image', 'visibility', 'likes_count'
+        'user_id', 'group_id', 'title', 'content', 'image', 'visibility', 'likes_count'
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
     }
 
     public function comments(): HasMany

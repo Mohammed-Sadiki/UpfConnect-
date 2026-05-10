@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\Message;
 use App\Models\Connection;
 use App\Models\Comment;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -22,6 +23,7 @@ class AdminController extends Controller
             'users_count' => User::count(),
             'posts_count' => Post::count(),
             'events_count' => Event::count(),
+            'groups_count' => Group::count(),
             'active_students' => User::where('role', 'student')->where('is_active', true)->count(),
             'messages_count' => Message::count(),
             'connections_count' => Connection::where('status', 'accepted')->count(),
