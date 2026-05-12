@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{user}', [MessageController::class, 'show'])->name('messages.show');
     Route::post('/messages/{user}', [MessageController::class, 'store'])->name('messages.store');
+    Route::delete('/messages/{message}/delete', [MessageController::class, 'destroy'])->name('messages.destroy');
 
     // Events
     Route::resource('events', EventController::class);
@@ -48,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{notification}/read', [NotificationController::class, 'markAndRedirect'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
     // Search

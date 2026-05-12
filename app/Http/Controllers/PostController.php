@@ -56,6 +56,20 @@ class PostController extends Controller
     }
 
     /**
+     * Display a single post (used for notification redirects).
+     */
+    public function show(Post $post)
+    {
+        // Vérifier la visibilité
+        if ($post->visibility === 'private' && $post->user_id !== auth()->id()) {
+            abort(403, 'Ce post est privé.');
+        }
+
+        $post->load(['user', 'comments.user', 'likedByUsers']);
+        return view('posts.show', compact('post'));
+    }
+
+    /**
      * Store a new post.
      */
     public function store(Request $request)

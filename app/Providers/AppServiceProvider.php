@@ -36,6 +36,12 @@ class AppServiceProvider extends ServiceProvider
                     ->whereNull('read_at')
                     ->count();
 
+                // Dernières notifs pour le dropdown navbar
+                $navbarNotifications = $user->notifications()
+                    ->latest()
+                    ->take(8)
+                    ->get();
+
                 // "À la une" - Événements à venir
                 $upcomingEvents = \App\Models\Event::withCount('registrations')
                     ->where('event_date', '>=', now())
@@ -95,7 +101,8 @@ class AppServiceProvider extends ServiceProvider
                     'unreadNotificationsCount' => $unreadNotificationsCount,
                     'sidebarUpcomingEvents' => $upcomingEvents,
                     'sidebarTrendingPosts' => $trendingPosts,
-                    'profileSuggestions' => $profileSuggestions,
+                    'profileSuggestions'        => $profileSuggestions,
+                    'navbarNotifications'        => $navbarNotifications,
                 ]);
             }
         });

@@ -223,13 +223,103 @@
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                 <span class="text-[10px] font-medium">Messages</span>
             </a>
-            <a href="{{ route('notifications.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-white/10 transition relative {{ request()->routeIs('notifications.*') ? 'nav-active' : '' }}">
-                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                <span class="text-[10px] font-medium">Notifs</span>
-                @if(($unreadNotificationsCount ?? 0) > 0)
-                <span class="notif-badge absolute top-0 right-1 w-4 h-4 rounded-full text-white text-[9px] font-bold flex items-center justify-center">{{ $unreadNotificationsCount }}</span>
-                @endif
-            </a>
+            {{-- Notification dropdown --}}
+            <div x-data="{ open: false, tab: 'all' }" class="relative">
+                <button @click="open=!open" @click.stop
+                        class="nav-link flex flex-col items-center px-3 py-1 rounded-lg transition relative"
+                        :class="open ? 'nav-active bg-cyan-50' : 'hover:bg-white/10 {{ request()->routeIs('notifications.*') ? 'nav-active' : '' }}'">
+                    <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                         :style="open ? 'color:var(--upf-neon-blue)' : ''">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    <span class="text-[10px] font-medium" :style="open ? 'color:var(--upf-neon-blue)' : ''">Notifs</span>
+                    @if(($unreadNotificationsCount ?? 0) > 0)
+                    <span class="notif-badge absolute top-0 right-1 w-4 h-4 rounded-full text-white text-[9px] font-bold flex items-center justify-center">{{ $unreadNotificationsCount }}</span>
+                    @endif
+                </button>
+
+                {{-- Panel dropdown --}}
+                <div x-show="open" x-transition @click.away="open=false"
+                     class="absolute right-0 mt-3 w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden"
+                     style="display:none">
+
+                    {{-- Header --}}
+                    <div class="flex items-center justify-between px-5 pt-5 pb-3">
+                        <h3 class="text-lg font-bold text-slate-800">Notifications</h3>
+                        <a href="{{ route('notifications.index') }}"
+                           class="text-xs font-semibold text-cyan-600 hover:text-cyan-700 transition">Voir tout</a>
+                    </div>
+
+                    {{-- Tabs --}}
+                    <div class="flex px-5 mb-2 space-x-2">
+                        <button @click="tab='all'"
+                                :class="tab==='all' ? 'bg-slate-100 text-slate-800 font-semibold' : 'text-slate-500 hover:bg-slate-50'"
+                                class="px-4 py-1.5 rounded-full text-sm transition">Tout</button>
+                        <button @click="tab='unread'"
+                                :class="tab==='unread' ? 'bg-slate-100 text-slate-800 font-semibold' : 'text-slate-500 hover:bg-slate-50'"
+                                class="px-4 py-1.5 rounded-full text-sm transition">Non lu</button>
+                    </div>
+
+                    {{-- Liste --}}
+                    <div class="max-h-96 overflow-y-auto">
+                        @forelse(($navbarNotifications ?? collect()) as $notif)
+                        @php
+                            $isUnread = is_null($notif->read_at);
+                            $show = true;
+                        @endphp
+                        <a href="{{ route('notifications.read', $notif->id) }}"
+                           x-show="tab==='all' || (tab==='unread' && {{ $isUnread ? 'true' : 'false' }})"
+                           class="flex items-start px-4 py-3 hover:bg-slate-50 transition {{ $isUnread ? 'bg-cyan-50/40' : '' }}">
+                            {{-- Avatar --}}
+                            <div class="flex-shrink-0 mr-3">
+                                @if($notif->data['sender_avatar'] ?? false)
+                                    <img src="{{ asset('storage/'.$notif->data['sender_avatar']) }}"
+                                         class="w-11 h-11 rounded-full object-cover" alt="">
+                                @else
+                                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                                         style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
+                                        {{ substr($notif->data['sender_name'] ?? '?', 0, 1) }}
+                                    </div>
+                                @endif
+                            </div>
+                            {{-- Contenu --}}
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700 leading-snug {{ $isUnread ? 'font-medium' : '' }}">
+                                    {{ $notif->data['message'] ?? 'Nouvelle notification' }}
+                                </p>
+                                <p class="text-xs text-cyan-600 font-medium mt-0.5">{{ $notif->created_at->diffForHumans() }}</p>
+                            </div>
+                            {{-- Point bleu si non lu --}}
+                            @if($isUnread)
+                            <div class="flex-shrink-0 ml-2 mt-2 w-2.5 h-2.5 rounded-full bg-cyan-500"></div>
+                            @endif
+                        </a>
+                        @empty
+                        <div class="flex flex-col items-center py-10 text-center">
+                            <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                                <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm text-slate-500">Aucune notification</p>
+                        </div>
+                        @endforelse
+                    </div>
+
+                    {{-- Footer --}}
+                    @if(($unreadNotificationsCount ?? 0) > 0)
+                    <div class="border-t border-slate-100 p-3">
+                        <form method="POST" action="{{ route('notifications.readAll') }}">
+                            @csrf
+                            <button type="submit"
+                                    class="w-full text-sm text-cyan-600 font-semibold hover:bg-cyan-50 py-2 rounded-xl transition">
+                                Tout marquer comme lu
+                            </button>
+                        </form>
+                    </div>
+                    @endif
+                </div>
+            </div>
 
             <!-- Profile dropdown -->
             <div x-data="{ open: false }" class="relative ml-1">
@@ -298,11 +388,14 @@
 <!-- MAIN CONTENT -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
     @php
-        $isAdminPage = request()->routeIs('admin.*');
+        $isAdminPage    = request()->routeIs('admin.*');
+        $isDashboard    = request()->routeIs('dashboard');
+        $showSidebars   = $isDashboard && !$isAdminPage;
+        $hideRightSidebar = !$showSidebars;
     @endphp
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <!-- LEFT SIDEBAR -->
+        <!-- LEFT SIDEBAR - Only on dashboard or admin -->
         @if($isAdminPage)
         <!-- Admin Sidebar with Quick Actions -->
         <div class="hidden lg:block lg:col-span-1 anim-slide-left">
@@ -341,24 +434,26 @@
                 </div>
             </div>
         </div>
-        @else
+        @elseif($showSidebars)
         <!-- Regular User Sidebar -->
         <div class="hidden lg:block lg:col-span-1 anim-slide-left">
             <div class="upf-card overflow-hidden sticky top-24">
                 <div class="profile-banner h-20 relative">
                     <div class="absolute inset-0 opacity-20" style="background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.1) 10px,rgba(255,255,255,.1) 20px)"></div>
                 </div>
-                <div class="px-4 pb-4 relative">
-                    <img class="w-16 h-16 rounded-full border-4 border-white object-cover absolute -top-8 left-1/2 -translate-x-1/2 shadow-lg"
-                         src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=1a3a6b&color=fff' }}"
-                         alt="">
-                    <div class="text-center mt-10">
-                        <h2 class="font-bold text-gray-900 text-sm">{{ auth()->user()->name }}</h2>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ auth()->user()->bio ?? auth()->user()->department }}</p>
-                        <span class="inline-block mt-2 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                              style="background:rgba(26,58,107,0.1); color:var(--upf-blue)">
-                            {{ ucfirst(auth()->user()->role) }}
-                        </span>
+                <div class="px-4 pb-4">
+                    <div class="flex flex-col items-center">
+                        <img class="w-16 h-16 rounded-full border-4 border-white object-cover -mt-8 shadow-lg relative z-10"
+                             src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=1a3a6b&color=fff' }}"
+                             alt="">
+                        <div class="text-center mt-3">
+                            <h2 class="font-bold text-gray-900 text-sm">{{ auth()->user()->name }}</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">{{ auth()->user()->bio ?? auth()->user()->department }}</p>
+                            <span class="inline-block mt-2 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                                  style="background:rgba(26,58,107,0.1); color:var(--upf-blue)">
+                                {{ ucfirst(auth()->user()->role) }}
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="border-t border-gray-100 px-4 py-3 space-y-2">
@@ -380,12 +475,12 @@
         @endif
 
         <!-- CENTER CONTENT -->
-        <div class="{{ $isAdminPage ? 'lg:col-span-3' : 'lg:col-span-2' }} anim-fade-up">
+        <div class="{{ $isAdminPage ? 'lg:col-span-3' : ($showSidebars ? 'lg:col-span-2' : 'lg:col-span-4') }} anim-fade-up">
             {{ $slot }}
         </div>
 
-        <!-- RIGHT SIDEBAR - Hidden on admin pages -->
-        @if(!$isAdminPage)
+        <!-- RIGHT SIDEBAR - Only on dashboard -->
+        @if($showSidebars)
         <div class="hidden lg:block lg:col-span-1 anim-fade-up anim-delay-2">
             <!-- University banner -->
             <div class="upf-card overflow-hidden mb-4">

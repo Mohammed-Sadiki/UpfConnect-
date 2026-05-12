@@ -1,190 +1,400 @@
 <x-app-layout>
-<div class="h-[calc(100vh-140px)] -mt-4 -mx-4">
-    <div class="glass-card h-full flex overflow-hidden rounded-2xl">
-        <!-- Sidebar avec couleurs -->
-        <div class="w-1/3 border-r border-white/10 flex flex-col bg-gradient-to-b from-blue-500/5 to-purple-500/5">
-            <div class="p-4 border-b border-white/10 bg-gradient-to-r from-blue-500/20 to-purple-500/20">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+    <div class="h-[calc(100vh-140px)] -mt-4 -mx-4"
+        x-data="{ deleteModal: { show: false, action: '' }, openDelete(action){ this.deleteModal.action=action; this.deleteModal.show=true; } }">
+
+        {{-- ===== MODAL CONFIRMATION SUPPRESSION ===== --}}
+        <div x-show="deleteModal.show" x-transition.opacity
+            class="fixed inset-0 z-[9999] flex items-center justify-center"
+            style="display:none; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px)">
+            <div x-show="deleteModal.show" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="bg-white rounded-2xl shadow-2xl w-80 overflow-hidden">
+                {{-- Icône --}}
+                <div class="flex justify-center pt-8 pb-4">
+                    <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </div>
-                    <h2 class="text-lg font-bold text-white">Messagerie</h2>
                 </div>
-            </div>
-            <div class="flex-1 overflow-y-auto">
-                @php
-                    // Group messages by conversation partner for sidebar
-                    $sidebarConversations = [];
-                    foreach($allMessages ?? $messages as $sidebarMsg) {
-                        $sidebarOther = $sidebarMsg->sender_id === auth()->id() ? $sidebarMsg->receiver : $sidebarMsg->sender;
-                        if (!isset($sidebarConversations[$sidebarOther->id])) {
-                            $sidebarConversations[$sidebarOther->id] = [
-                                'user' => $sidebarOther,
-                                'message' => $sidebarMsg
-                            ];
-                        }
-                    }
-                @endphp
-                @forelse($sidebarConversations as $conversation)
-                @php
-                    $sidebarOther = $conversation['user'];
-                    $sidebarMsg = $conversation['message'];
-                    $isActive = isset($user) && $user->id === $sidebarOther->id;
-                    $isUnread = !$sidebarMsg->read_at && $sidebarMsg->receiver_id === auth()->id();
-                @endphp
-                <a href="{{ route('messages.show', $sidebarOther) }}" 
-                   class="flex items-center p-4 border-b border-white/5 transition {{ $isActive ? 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 border-l-4 border-l-blue-400' : 'hover:bg-white/5' }}">
-                    <div class="relative">
-                        @if($sidebarOther->avatar)
-                            <img class="h-12 w-12 rounded-full object-cover ring-2 {{ $isActive ? 'ring-blue-400' : 'ring-white/20' }}" src="{{ asset('storage/' . $sidebarOther->avatar) }}">
-                        @else
-                            <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center ring-2 ring-white/20">
-                                <span class="text-white font-bold">{{ substr($sidebarOther->name, 0, 1) }}</span>
-                            </div>
-                        @endif
-                        @if($isUnread)
-                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-pink-500 rounded-full animate-pulse"></span>
-                        @endif
-                    </div>
-                    <div class="ml-3 flex-1 overflow-hidden">
-                        <div class="flex justify-between items-baseline">
-                            <h3 class="font-semibold text-sm {{ $isActive || $isUnread ? 'text-white' : 'text-gray-300' }}">{{ $sidebarOther->name }}</h3>
-                            <span class="text-xs text-gray-500">{{ $sidebarMsg->created_at->format('H:i') }}</span>
-                        </div>
-                        <p class="text-xs truncate {{ $isUnread ? 'text-white font-semibold' : 'text-gray-400' }}">
-                            @if($sidebarMsg->sender_id === auth()->id())
-                                <span class="text-blue-400">Vous:</span>
-                            @endif
-                            {{ $sidebarMsg->body }}
-                        </p>
-                    </div>
-                </a>
-                @empty
-                <div class="p-4 text-center text-gray-400 text-sm">Aucune conversation</div>
-                @endforelse
+                {{-- Texte --}}
+                <div class="text-center px-6 pb-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Supprimer le message ?</h3>
+                    <p class="text-sm text-slate-500">Ce message sera définitivement supprimé. Cette action est
+                        irréversible.</p>
+                </div>
+                {{-- Actions --}}
+                <div class="border-t border-slate-100">
+                    <form :action="deleteModal.action" method="POST">
+                        @csrf @method('DELETE')
+                        <button type="submit"
+                            class="w-full py-3.5 text-red-500 font-bold text-sm hover:bg-red-50 transition border-b border-slate-100">
+                            Supprimer
+                        </button>
+                    </form>
+                    <button @click="deleteModal.show = false"
+                        class="w-full py-3.5 text-slate-600 font-medium text-sm hover:bg-slate-50 transition">
+                        Annuler
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Chat Area avec couleurs -->
-        <div class="w-2/3 flex flex-col bg-gradient-to-b from-gray-900 to-black">
-            @if(isset($user))
-            <!-- Header coloré -->
-            <div class="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-white/10 flex items-center">
-                <div class="relative">
-                    @if($user->avatar)
-                        <img class="h-12 w-12 rounded-full object-cover ring-2 ring-blue-400/50" src="{{ asset('storage/' . $user->avatar) }}">
-                    @else
-                        <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center ring-2 ring-blue-400/50">
-                            <span class="text-white font-bold text-lg">{{ substr($user->name, 0, 1) }}</span>
+        <div class="h-full flex overflow-hidden rounded-2xl border border-white/50 shadow-lg"
+            style="background:rgba(255,255,255,0.7); backdrop-filter:blur(16px);">
+
+            {{-- ===== SIDEBAR CONVERSATIONS ===== --}}
+            <div class="w-1/3 border-r border-slate-200 flex flex-col">
+                {{-- Header sidebar --}}
+                <div class="p-4 border-b border-slate-200"
+                    style="background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(139,92,246,0.12))">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow"
+                            style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
                         </div>
-                    @endif
-                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></span>
+                        <h2 class="text-base font-bold text-slate-800">Messagerie</h2>
+                    </div>
                 </div>
-                <div class="ml-4">
-                    <h3 class="font-bold text-white text-lg">{{ $user->name }}</h3>
-                    <p class="text-xs text-blue-400">{{ $user->department }} • En ligne</p>
-                </div>
-                <div class="ml-auto flex space-x-2">
-                    <a href="{{ route('profile.show', $user) }}" class="p-2 text-gray-400 hover:text-white transition" title="Voir profil">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
 
-            <!-- Messages List avec couleurs -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col" id="chatBox">
-                @php
-                    $currentDate = null;
-                    $lastMessage = null;
-                @endphp
-
-                @foreach($messages as $msg)
+                {{-- Liste conversations --}}
+                <div class="flex-1 overflow-y-auto">
                     @php
-                        $messageDate = $msg->created_at->format('Y-m-d');
-                        $showDate = $messageDate !== $currentDate;
-                        $currentDate = $messageDate;
-                        $isConsecutive = $lastMessage && $lastMessage->sender_id === $msg->sender_id;
-                        $lastMessage = $msg;
+                        $sidebarConversations = [];
+                        foreach ($allMessages ?? $messages as $sidebarMsg) {
+                            $sidebarOther = $sidebarMsg->sender_id === auth()->id() ? $sidebarMsg->receiver : $sidebarMsg->sender;
+                            if (!isset($sidebarConversations[$sidebarOther->id])) {
+                                $sidebarConversations[$sidebarOther->id] = [
+                                    'user' => $sidebarOther,
+                                    'message' => $sidebarMsg
+                                ];
+                            }
+                        }
                     @endphp
 
-                    {{-- Date separator coloré --}}
-                    @if($showDate)
-                        <div class="flex justify-center my-4">
-                            <span class="text-xs text-gray-300 bg-gradient-to-r from-blue-500/30 to-purple-500/30 px-4 py-1.5 rounded-full border border-white/10">
-                                @if($msg->created_at->isToday())
-                                    Aujourd'hui
-                                @elseif($msg->created_at->isYesterday())
-                                    Hier
+                    @forelse($sidebarConversations as $conversation)
+                        @php
+                            $sidebarOther = $conversation['user'];
+                            $sidebarMsg = $conversation['message'];
+                            $isActive = isset($user) && $user->id === $sidebarOther->id;
+                            $isUnread = !$sidebarMsg->read_at && $sidebarMsg->receiver_id === auth()->id();
+                        @endphp
+                        <a href="{{ route('messages.show', $sidebarOther) }}" class="flex items-center p-4 border-b border-slate-100 transition-all duration-200
+                              {{ $isActive ? 'border-l-4 border-l-cyan-500' : 'hover:bg-slate-50' }}"
+                            style="{{ $isActive ? 'background:rgba(14,165,233,0.08)' : '' }}">
+                            <div class="relative flex-shrink-0">
+                                @if($sidebarOther->avatar)
+                                    <img class="h-11 w-11 rounded-full object-cover ring-2 {{ $isActive ? 'ring-cyan-400' : 'ring-slate-200' }}"
+                                        src="{{ asset('storage/' . $sidebarOther->avatar) }}" alt="">
                                 @else
-                                    {{ $msg->created_at->format('d/m/Y') }}
+                                    <div class="h-11 w-11 rounded-full flex items-center justify-center ring-2 {{ $isActive ? 'ring-cyan-400' : 'ring-slate-200' }}"
+                                        style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
+                                        <span
+                                            class="text-white font-bold text-sm">{{ substr($sidebarOther->name, 0, 1) }}</span>
+                                    </div>
                                 @endif
-                            </span>
-                        </div>
-                    @endif
-
-                    @if($msg->sender_id === auth()->id())
-                        {{-- Message envoyé - dégradé bleu/violet --}}
-                        <div class="self-end flex flex-col items-end {{ $isConsecutive ? '-mt-2' : '' }}">
-                            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl {{ $isConsecutive ? 'rounded-tr-lg' : 'rounded-tr-none' }} rounded-tl-2xl rounded-bl-2xl p-3.5 max-w-[75%] shadow-lg shadow-blue-500/20">
-                                <p class="text-sm">{{ $msg->body }}</p>
+                                @if($isUnread)
+                                    <span
+                                        class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                                @else
+                                    <span
+                                        class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                                @endif
                             </div>
-                            <span class="text-[10px] text-gray-500 mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</span>
-                        </div>
-                    @else
-                        {{-- Message reçu - glassmorphism --}}
-                        <div class="self-start flex flex-col items-start {{ $isConsecutive ? '-mt-2' : '' }}">
-                            @if(!$isConsecutive)
-                                <div class="flex items-center mb-1.5 ml-1">
-                                    <img class="w-7 h-7 rounded-full mr-2 ring-2 ring-purple-400/50" src="{{ $msg->sender->avatar ? asset('storage/' . $msg->sender->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($msg->sender->name) }}" alt="">
-                                    <span class="text-xs text-purple-400 font-medium">{{ $msg->sender->name }}</span>
+                            <div class="ml-3 flex-1 min-w-0">
+                                <div class="flex justify-between items-baseline">
+                                    <h3 class="font-semibold text-sm text-slate-800 truncate">{{ $sidebarOther->name }}</h3>
+                                    <span
+                                        class="text-[10px] text-slate-400 whitespace-nowrap ml-2">{{ $sidebarMsg->created_at->format('H:i') }}</span>
+                                </div>
+                                <p
+                                    class="text-xs truncate mt-0.5 {{ $isUnread ? 'text-slate-700 font-semibold' : 'text-slate-500' }}">
+                                    @if($sidebarMsg->sender_id === auth()->id())
+                                        <span class="text-cyan-600">Vous :</span>
+                                    @endif
+                                    {{ $sidebarMsg->body }}
+                                </p>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="p-6 text-center text-slate-400 text-sm">Aucune conversation</div>
+                    @endforelse
+                </div>
+            </div>
+
+            {{-- ===== ZONE CHAT ===== --}}
+            <div class="w-2/3 flex flex-col" style="background:rgba(248,250,252,0.9)">
+                @if(isset($user))
+
+                    {{-- Header chat --}}
+                    <div class="p-4 border-b border-slate-200 flex items-center" style="background:rgba(255,255,255,0.8)">
+                        <div class="relative flex-shrink-0">
+                            @if($user->avatar)
+                                <img class="h-11 w-11 rounded-full object-cover ring-2 ring-cyan-300"
+                                    src="{{ asset('storage/' . $user->avatar) }}" alt="">
+                            @else
+                                <div class="h-11 w-11 rounded-full flex items-center justify-center ring-2 ring-cyan-300"
+                                    style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
+                                    <span class="text-white font-bold text-lg">{{ substr($user->name, 0, 1) }}</span>
                                 </div>
                             @endif
-                            <div class="bg-gradient-to-r from-white/10 to-white/5 text-white rounded-2xl {{ $isConsecutive ? 'rounded-tl-lg' : 'rounded-tl-none' }} rounded-tr-2xl rounded-br-2xl p-3.5 max-w-[75%] backdrop-blur-sm border border-white/10 shadow-lg">
-                                <p class="text-sm">{{ $msg->body }}</p>
-                            </div>
-                            <span class="text-[10px] text-gray-500 mt-1 ml-1">{{ $msg->created_at->format('H:i') }}</span>
+                            <span
+                                class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></span>
                         </div>
-                    @endif
-                @endforeach
+                        <div class="ml-4">
+                            <h3 class="font-bold text-slate-800 text-base">{{ $user->name }}</h3>
+                            <p class="text-xs text-cyan-600">{{ $user->department }} • En ligne</p>
+                        </div>
+                        <div class="ml-auto">
+                            <a href="{{ route('profile.show', $user) }}"
+                                class="p-2 text-slate-400 hover:text-cyan-600 transition rounded-lg hover:bg-cyan-50"
+                                title="Voir profil">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Messages --}}
+                    <div class="flex-1 overflow-y-auto p-5 space-y-3 flex flex-col" id="chatBox">
+                        @php
+                            $currentDate = null;
+                            $lastMessage = null;
+                        @endphp
+
+                        @foreach($messages as $msg)
+                            @php
+                                $messageDate = $msg->created_at->format('Y-m-d');
+                                $showDate = $messageDate !== $currentDate;
+                                $currentDate = $messageDate;
+                                $isConsecutive = $lastMessage && $lastMessage->sender_id === $msg->sender_id;
+                                $lastMessage = $msg;
+                            @endphp
+
+                            {{-- Séparateur de date --}}
+                            @if($showDate)
+                                <div class="flex justify-center my-3">
+                                    <span
+                                        class="text-xs text-slate-500 bg-white px-4 py-1 rounded-full border border-slate-200 shadow-sm">
+                                        @if($msg->created_at->isToday()) Aujourd'hui
+                                        @elseif($msg->created_at->isYesterday()) Hier
+                                        @else {{ $msg->created_at->format('d/m/Y') }}
+                                        @endif
+                                    </span>
+                                </div>
+                            @endif
+
+                            @if($msg->sender_id === auth()->id())
+                                {{-- Message envoyé --}}
+                                <div class="self-end flex flex-col items-end {{ $isConsecutive ? '-mt-1' : '' }} max-w-[65%]"
+                                    x-data="{ open: false }">
+                                    <div class="flex items-end space-x-1.5 group w-full justify-end">
+                                        {{-- Bouton menu --}}
+                                        <div class="relative flex-shrink-0">
+                                            <button @click="open = !open" @click.stop
+                                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 mb-1">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
+                                                </svg>
+                                            </button>
+                                            <div x-show="open" x-transition @click.away="open = false"
+                                                class="absolute bottom-8 right-0 z-50 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1 text-sm"
+                                                style="display:none">
+                                                {{-- Copier --}}
+                                                <button
+                                                    onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; setTimeout(()=>document.querySelectorAll('[x-data]').forEach(el=>el._x_dataStack&&(el._x_dataStack[0].open=false)),800) })"
+                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <span>Copier</span>
+                                                </button>
+                                                {{-- Transférer : pré-remplit le champ --}}
+                                                <button
+                                                    onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); this.closest('[x-data]')._x_dataStack[0].open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                                    </svg>
+                                                    <span>Transférer</span>
+                                                </button>
+                                                {{-- Épingler --}}
+                                                <button
+                                                    onclick="alert('Épinglé !'); this.closest('[x-data]')._x_dataStack[0].open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                    </svg>
+                                                    <span>Épingler</span>
+                                                </button>
+                                                <div class="border-t border-slate-100 my-1"></div>
+                                                {{-- Supprimer --}}
+                                                <button @click="openDelete('{{ route('messages.destroy', $msg) }}'); open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-red-500 hover:bg-red-50 transition space-x-3">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                    <span>Supprimer</span>
+                                                </button>
+                                                {{-- Signaler --}}
+                                                <button
+                                                    onclick="alert('Message signalé. Merci !'); this.closest('[x-data]')._x_dataStack[0].open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-orange-500 hover:bg-orange-50 transition space-x-3">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                    </svg>
+                                                    <span>Signaler</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {{-- Bulle message --}}
+                                        <div class="text-white px-4 py-2.5 shadow-sm break-words"
+                                            style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6); border-radius:18px 4px 18px 18px;">
+                                            <p class="text-sm leading-relaxed">{{ $msg->body }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</span>
+                                </div>
+                            @else
+                                {{-- Message reçu --}}
+                                <div class="self-start flex flex-col items-start {{ $isConsecutive ? '-mt-1' : '' }} max-w-[65%]"
+                                    x-data="{ open: false }">
+                                    @if(!$isConsecutive)
+                                        <div class="flex items-center mb-1.5 ml-1">
+                                            <img class="w-6 h-6 rounded-full mr-2 ring-1 ring-slate-200"
+                                                src="{{ $msg->sender->avatar ? asset('storage/' . $msg->sender->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($msg->sender->name) . '&background=8b5cf6&color=fff' }}"
+                                                alt="">
+                                            <span class="text-xs text-purple-600 font-semibold">{{ $msg->sender->name }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="flex items-end space-x-1.5 group w-full">
+                                        {{-- Bulle message --}}
+                                        <div class="bg-white text-slate-700 px-4 py-2.5 border border-slate-200 shadow-sm break-words flex-1"
+                                            style="border-radius: 4px 18px 18px 18px;">
+                                            <p class="text-sm leading-relaxed">{{ $msg->body }}</p>
+                                        </div>
+                                        {{-- Bouton menu --}}
+                                        <div class="relative flex-shrink-0">
+                                            <button @click="open = !open" @click.stop
+                                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 mb-1">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
+                                                </svg>
+                                            </button>
+                                            <div x-show="open" x-transition @click.away="open = false"
+                                                class="absolute bottom-8 left-0 z-50 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1 text-sm"
+                                                style="display:none">
+                                                {{-- Copier --}}
+                                                <button
+                                                    onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; setTimeout(()=>this.closest('[x-data]')._x_dataStack[0].open=false,800) })"
+                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <span>Copier</span>
+                                                </button>
+                                                {{-- Transférer --}}
+                                                <button
+                                                    onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); this.closest('[x-data]')._x_dataStack[0].open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                                    </svg>
+                                                    <span>Transférer</span>
+                                                </button>
+                                                {{-- Épingler --}}
+                                                <button
+                                                    onclick="alert('Épinglé !'); this.closest('[x-data]')._x_dataStack[0].open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                    </svg>
+                                                    <span>Épingler</span>
+                                                </button>
+                                                <div class="border-t border-slate-100 my-1"></div>
+                                                {{-- Signaler --}}
+                                                <button
+                                                    onclick="alert('Message signalé. Merci !'); this.closest('[x-data]')._x_dataStack[0].open=false"
+                                                    class="flex items-center w-full px-4 py-2 text-orange-500 hover:bg-orange-50 transition space-x-3">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                    </svg>
+                                                    <span>Signaler</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 mt-1 ml-1">{{ $msg->created_at->format('H:i') }}</span>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    {{-- Formulaire envoi --}}
+                    <div class="p-4 border-t border-slate-200 bg-white">
+                        <form action="{{ route('messages.store', $user) }}" method="POST"
+                            class="flex items-center space-x-3">
+                            @csrf
+                            <input type="text" name="body" required placeholder="Écrire un message..." class="flex-1 bg-slate-50 border border-slate-200 rounded-full px-5 py-2.5 text-sm text-slate-700 placeholder-slate-400
+                                      focus:outline-none focus:ring-2 focus:border-cyan-400 transition"
+                                style="--tw-ring-color:rgba(14,165,233,0.3)">
+                            <button type="submit"
+                                class="text-white rounded-full p-3 transition shadow-md hover:shadow-lg transform hover:scale-105"
+                                style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+
+                    <script>
+                        const chatBox = document.getElementById('chatBox');
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    </script>
+
+                @else
+                    {{-- Aucune conversation sélectionnée --}}
+                    <div class="flex-1 flex items-center justify-center flex-col">
+                        <div class="w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-lg"
+                            style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                        </div>
+                        <p class="text-slate-700 font-semibold text-lg mb-1">Vos messages</p>
+                        <p class="text-slate-400 text-sm">Sélectionnez une conversation pour commencer</p>
+                    </div>
+                @endif
             </div>
 
-            <!-- Input Form coloré -->
-            <div class="p-4 bg-gradient-to-r from-gray-800 to-gray-900 border-t border-white/10">
-                <form action="{{ route('messages.store', $user) }}" method="POST" class="flex items-center space-x-3">
-                    @csrf
-                    <div class="flex-1 relative">
-                        <input type="text" name="body" required placeholder="Écrire un message..." 
-                               class="w-full bg-white/5 border border-white/10 rounded-full px-5 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition">
-                    </div>
-                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-full p-3 transition shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform hover:scale-105">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                        </svg>
-                    </button>
-                </form>
-            </div>
-            
-            <script>
-                // Scroll to bottom
-                const chatBox = document.getElementById('chatBox');
-                chatBox.scrollTop = chatBox.scrollHeight;
-            </script>
-            @else
-            <div class="flex-1 flex items-center justify-center flex-col">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                    </svg>
-                </div>
-                <p class="text-white font-semibold text-lg mb-2">Vos messages</p>
-                <p class="text-gray-400">Sélectionnez une conversation pour commencer</p>
-            </div>
-            @endif
         </div>
     </div>
-</div>
 </x-app-layout>

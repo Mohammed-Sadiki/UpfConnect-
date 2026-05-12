@@ -79,11 +79,26 @@ class MessageController extends Controller
         $request->validate(['body' => 'required|string|max:1000']);
 
         Message::create([
-            'sender_id' => auth()->id(),
+            'sender_id'   => auth()->id(),
             'receiver_id' => $user->id,
-            'body' => $request->body,
+            'body'        => $request->body,
         ]);
 
         return back();
+    }
+
+    public function destroy(Message $message)
+    {
+        // Only the sender can delete their own message
+        if ($message->sender_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $receiverId = $message->receiver_id;
+        $message->delete();
+
+        $other = User::find($receiverId);
+        return redirect()->route('messages.show', $other)
+                         ->with('success', 'Message supprimé.');
     }
 }
