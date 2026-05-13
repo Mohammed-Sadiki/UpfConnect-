@@ -12,8 +12,12 @@ use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('home');
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [PostController::class, 'feed'])->name('dashboard');

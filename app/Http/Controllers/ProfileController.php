@@ -11,7 +11,10 @@ class ProfileController extends Controller
 {
     public function show(User $user)
     {
-        $user->load('profile', 'posts');
+        $user->load([
+            'profile',
+            'posts' => fn ($q) => $q->withCount('comments')->latest(),
+        ]);
         $isConnected = false;
         
         if (auth()->check() && auth()->id() !== $user->id) {

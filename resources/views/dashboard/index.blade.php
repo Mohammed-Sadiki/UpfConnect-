@@ -229,7 +229,7 @@
         <div class="flex justify-center pt-10 pb-4 min-h-full">
             <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden h-fit">
             <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-900">Créer un post</h3>
+                <h3 class="text-lg font-bold text-slate-900" style="color: #0f172a;">Créer un post</h3>
                 <button onclick="document.getElementById('post-modal').classList.add('hidden')"
                         class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-1.5 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -242,9 +242,9 @@
                          src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                          alt="">
                     <div>
-                        <span class="font-semibold text-gray-900">{{ auth()->user()->name }}</span>
+                        <span class="font-semibold text-slate-900" style="color: #0f172a;">{{ auth()->user()->name }}</span>
                         <div class="mt-1">
-                            <select name="visibility" class="text-xs border border-gray-300 bg-white text-gray-700 rounded-full px-3 py-1 focus:outline-none focus:border-blue-500">
+                            <select name="visibility" class="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                                 <option value="public">🌍 Tout le monde</option>
                                 <option value="university">🎓 Mon université</option>
                                 <option value="private">🔒 Privé</option>
@@ -253,9 +253,9 @@
                     </div>
                 </div>
                 <input type="text" name="title" placeholder="Titre (optionnel)"
-                       class="w-full border-0 border-b border-gray-100 focus:ring-0 focus:border-blue-300 text-base font-medium text-gray-900 bg-transparent mb-2 pb-2 placeholder-gray-400">
-                <textarea name="content" rows="3" placeholder="De quoi souhaitez-vous parler ? (optionnel si vous ajoutez une image)"
-                          class="w-full border-0 focus:ring-0 resize-none text-sm text-gray-800 bg-transparent leading-relaxed placeholder-gray-400"></textarea>
+                       class="mb-2 w-full border-0 border-b border-slate-200 bg-transparent pb-2 text-base font-medium text-slate-900 placeholder:text-slate-500 focus:border-blue-400 focus:ring-0">
+                <textarea name="content" rows="4" placeholder="De quoi souhaitez-vous parler ? (optionnel si vous ajoutez une image)"
+                          class="w-full resize-none border-0 bg-transparent text-sm leading-relaxed text-slate-900 placeholder:text-slate-500 focus:ring-0"></textarea>
                 <div id="image-preview" class="hidden mt-3 rounded-xl overflow-hidden border border-gray-200 relative">
                     <img id="preview-img" src="" class="max-h-60 w-full object-cover">
                     <button type="button" onclick="removeImage()" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition" title="Supprimer l'image">

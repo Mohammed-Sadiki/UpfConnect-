@@ -33,7 +33,46 @@
         h1, h2, h3, h4, h5, h6, .brand-text {
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 0.5px;
-            color: #0f172a;
+            color: #0f172a !important;
+        }
+
+        /*
+         * UI principalement claire : en prefers-color-scheme: dark, Tailwind active
+         * dark:text-white / dark:bg-neutral-* et le texte disparaît sur glass-card blanc.
+         * On force texte et champs lisibles dans le contenu principal.
+         */
+        @media (prefers-color-scheme: dark) {
+            main .glass-card .dark\:text-white,
+            main .upf-card .dark\:text-white,
+            main .glass-card h1,
+            main .glass-card h2,
+            main .glass-card h3,
+            main .glass-card h4,
+            main .upf-card h1,
+            main .upf-card h2,
+            main .upf-card h3 {
+                color: #0f172a !important;
+            }
+            main .glass-card a[class*="text-gray-900"],
+            main .glass-card .text-gray-900 {
+                color: #0f172a !important;
+            }
+            main input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]),
+            main textarea,
+            main select {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                border-color: #cbd5e1 !important;
+            }
+            main input::placeholder,
+            main textarea::placeholder {
+                color: #64748b !important;
+                opacity: 1;
+            }
+            main .glass-card .text-gray-500,
+            main .glass-card .text-gray-600 {
+                color: #475569 !important;
+            }
         }
         
         /* Glassmorphism Cards */
@@ -153,9 +192,11 @@
         /* Flash toast */
         .flash-toast { animation: fadeInUp .4s ease; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border: 1px solid var(--upf-glass-border); color: var(--text-main); }
 
-        /* Global Theme Overrides for Tailwind classes used */
-        .text-gray-800, .text-gray-900 { color: #0f172a !important; text-shadow: none; }
-        .text-gray-600, .text-gray-500, .text-gray-400 { color: #475569 !important; }
+        /* Global Theme Overrides — uniquement en thème clair pour ne pas écraser dark:text-* (contraste illisible sinon) */
+        @media (prefers-color-scheme: light) {
+            .text-gray-800, .text-gray-900 { color: #0f172a !important; text-shadow: none; }
+            .text-gray-600, .text-gray-500, .text-gray-400 { color: #475569 !important; }
+        }
         .bg-white { background-color: var(--upf-light-surface) !important; }
         .border-gray-100, .border-gray-50 { border-color: rgba(0,0,0,0.05) !important; }
         .hover\:bg-blue-50:hover { background-color: rgba(14,165,233,0.1) !important; color: var(--upf-neon-blue) !important; }

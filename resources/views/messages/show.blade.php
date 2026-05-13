@@ -1,4 +1,50 @@
 <x-app-layout>
+    <style>[x-cloak]{display:none!important}</style>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('messageMenu', (align, msgId) => ({
+                open: false,
+                menuStyle: '',
+                align,
+                msgId,
+                toggleMenu() {
+                    if (!this.open) {
+                        window.dispatchEvent(new CustomEvent('message-menu-close-others', { detail: { except: this.msgId } }));
+                    }
+                    this.open = !this.open;
+                    if (this.open) {
+                        this.$nextTick(() => requestAnimationFrame(() => this.positionMenu()));
+                    }
+                },
+                positionMenu() {
+                    const btn = this.$refs.menuBtn;
+                    const menu = this.$refs.menuPanel;
+                    if (!btn || !menu) return;
+                    const br = btn.getBoundingClientRect();
+                    const mw = menu.offsetWidth || 192;
+                    const mh = menu.offsetHeight || 280;
+                    const pad = 8;
+                    const vw = window.innerWidth;
+                    const vh = window.innerHeight;
+                    let top = br.top - mh - pad;
+                    let left = this.align === 'right' ? (br.right - mw) : br.left;
+                    if (top < pad) {
+                        top = br.bottom + pad;
+                    }
+                    if (top + mh > vh - pad) {
+                        top = Math.max(pad, vh - mh - pad);
+                    }
+                    if (left + mw > vw - pad) {
+                        left = vw - mw - pad;
+                    }
+                    if (left < pad) {
+                        left = pad;
+                    }
+                    this.menuStyle = 'top:' + Math.round(top) + 'px;left:' + Math.round(left) + 'px';
+                },
+            }));
+        });
+    </script>
     <div class="h-[calc(100vh-140px)] -mt-4 -mx-4"
         x-data="{ deleteModal: { show: false, action: '' }, openDelete(action){ this.deleteModal.action=action; this.deleteModal.show=true; } }">
 
@@ -164,7 +210,8 @@
                     </div>
 
                     {{-- Messages --}}
-                    <div class="flex-1 overflow-y-auto p-5 space-y-3 flex flex-col" id="chatBox">
+                    <div class="flex-1 overflow-y-auto p-5 space-y-3 flex flex-col" id="chatBox"
+                        @scroll.passive="window.dispatchEvent(new CustomEvent('chat-scroll-reposition'))">
                         @php
                             $currentDate = null;
                             $lastMessage = null;
@@ -195,25 +242,29 @@
                             @if($msg->sender_id === auth()->id())
                                 {{-- Message envoyé --}}
                                 <div class="self-end flex flex-col items-end {{ $isConsecutive ? '-mt-1' : '' }} max-w-[65%]"
-                                    x-data="{ open: false }">
+                                    x-data="messageMenu('right', {{ $msg->id }})"
+                                    @message-menu-close-others.window="if ($event.detail.except !== msgId) open = false"
+                                    @chat-scroll-reposition.window="open && positionMenu()"
+                                    @resize.window="open && positionMenu()">
                                     <div class="flex items-end space-x-1.5 group w-full justify-end">
                                         {{-- Bouton menu --}}
                                         <div class="relative flex-shrink-0">
-                                            <button @click="open = !open" @click.stop
+                                            <button type="button" x-ref="menuBtn" @click.stop="toggleMenu()"
                                                 class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 mb-1">
                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path
                                                         d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
                                                 </svg>
                                             </button>
-                                            <div x-show="open" x-transition @click.away="open = false"
-                                                class="absolute bottom-8 right-0 z-50 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1 text-sm"
-                                                style="display:none">
+                                            <div x-show="open" x-transition @click.away="open = false" x-cloak
+                                                x-ref="menuPanel"
+                                                :style="menuStyle"
+                                                class="fixed z-[10050] min-w-[13rem] rounded-xl border border-slate-100 bg-white py-1.5 font-sans antialiased text-[15px] leading-snug shadow-xl">
                                                 {{-- Copier --}}
                                                 <button
-                                                    onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; setTimeout(()=>document.querySelectorAll('[x-data]').forEach(el=>el._x_dataStack&&(el._x_dataStack[0].open=false)),800) })"
-                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; const r=this.closest('[x-data]'); setTimeout(()=>{ if(r&&window.Alpine) Alpine.$data(r).open=false },800) })"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -222,9 +273,9 @@
                                                 </button>
                                                 {{-- Transférer : pré-remplit le champ --}}
                                                 <button
-                                                    onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); this.closest('[x-data]')._x_dataStack[0].open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -233,9 +284,9 @@
                                                 </button>
                                                 {{-- Épingler --}}
                                                 <button
-                                                    onclick="alert('Épinglé !'); this.closest('[x-data]')._x_dataStack[0].open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    onclick="alert('Épinglé !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -245,8 +296,8 @@
                                                 <div class="border-t border-slate-100 my-1"></div>
                                                 {{-- Supprimer --}}
                                                 <button @click="openDelete('{{ route('messages.destroy', $msg) }}'); open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-red-500 hover:bg-red-50 transition space-x-3">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-red-700 transition hover:bg-red-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
@@ -254,9 +305,9 @@
                                                 </button>
                                                 {{-- Signaler --}}
                                                 <button
-                                                    onclick="alert('Message signalé. Merci !'); this.closest('[x-data]')._x_dataStack[0].open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-orange-500 hover:bg-orange-50 transition space-x-3">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    onclick="alert('Message signalé. Merci !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-orange-800 transition hover:bg-orange-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-orange-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                                     </svg>
@@ -267,7 +318,7 @@
                                         {{-- Bulle message --}}
                                         <div class="text-white px-4 py-2.5 shadow-sm break-words"
                                             style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6); border-radius:18px 4px 18px 18px;">
-                                            <p class="text-sm leading-relaxed">{{ $msg->body }}</p>
+                                            <p class="text-sm font-medium leading-relaxed">{{ $msg->body }}</p>
                                         </div>
                                     </div>
                                     <span class="text-[10px] text-slate-400 mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</span>
@@ -275,7 +326,10 @@
                             @else
                                 {{-- Message reçu --}}
                                 <div class="self-start flex flex-col items-start {{ $isConsecutive ? '-mt-1' : '' }} max-w-[65%]"
-                                    x-data="{ open: false }">
+                                    x-data="messageMenu('left', {{ $msg->id }})"
+                                    @message-menu-close-others.window="if ($event.detail.except !== msgId) open = false"
+                                    @chat-scroll-reposition.window="open && positionMenu()"
+                                    @resize.window="open && positionMenu()">
                                     @if(!$isConsecutive)
                                         <div class="flex items-center mb-1.5 ml-1">
                                             <img class="w-6 h-6 rounded-full mr-2 ring-1 ring-slate-200"
@@ -288,25 +342,26 @@
                                         {{-- Bulle message --}}
                                         <div class="bg-white text-slate-700 px-4 py-2.5 border border-slate-200 shadow-sm break-words flex-1"
                                             style="border-radius: 4px 18px 18px 18px;">
-                                            <p class="text-sm leading-relaxed">{{ $msg->body }}</p>
+                                            <p class="text-sm font-medium text-slate-800 leading-relaxed">{{ $msg->body }}</p>
                                         </div>
                                         {{-- Bouton menu --}}
                                         <div class="relative flex-shrink-0">
-                                            <button @click="open = !open" @click.stop
+                                            <button type="button" x-ref="menuBtn" @click.stop="toggleMenu()"
                                                 class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 mb-1">
                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path
                                                         d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
                                                 </svg>
                                             </button>
-                                            <div x-show="open" x-transition @click.away="open = false"
-                                                class="absolute bottom-8 left-0 z-50 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1 text-sm"
-                                                style="display:none">
+                                            <div x-show="open" x-transition @click.away="open = false" x-cloak
+                                                x-ref="menuPanel"
+                                                :style="menuStyle"
+                                                class="fixed z-[10050] min-w-[13rem] rounded-xl border border-slate-100 bg-white py-1.5 font-sans antialiased text-[15px] leading-snug shadow-xl">
                                                 {{-- Copier --}}
                                                 <button
-                                                    onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; setTimeout(()=>this.closest('[x-data]')._x_dataStack[0].open=false,800) })"
-                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; const r=this.closest('[x-data]'); setTimeout(()=>{ if(r&&window.Alpine) Alpine.$data(r).open=false },800) })"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -315,9 +370,9 @@
                                                 </button>
                                                 {{-- Transférer --}}
                                                 <button
-                                                    onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); this.closest('[x-data]')._x_dataStack[0].open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -326,9 +381,9 @@
                                                 </button>
                                                 {{-- Épingler --}}
                                                 <button
-                                                    onclick="alert('Épinglé !'); this.closest('[x-data]')._x_dataStack[0].open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-50 transition space-x-3">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    onclick="alert('Épinglé !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -338,9 +393,9 @@
                                                 <div class="border-t border-slate-100 my-1"></div>
                                                 {{-- Signaler --}}
                                                 <button
-                                                    onclick="alert('Message signalé. Merci !'); this.closest('[x-data]')._x_dataStack[0].open=false"
-                                                    class="flex items-center w-full px-4 py-2 text-orange-500 hover:bg-orange-50 transition space-x-3">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    onclick="alert('Message signalé. Merci !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-orange-800 transition hover:bg-orange-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-orange-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                                     </svg>
