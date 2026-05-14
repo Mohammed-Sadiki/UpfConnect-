@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Post;
@@ -19,18 +19,24 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create('fr_FR');
-        $password = Hash::make('password');
+        // Mot de passe en clair : le cast `hashed` sur User hache à l'enregistrement.
+        $plainPassword = 'password';
+        // Comptes seedés : e-mail vérifié + remember_token (comme après une connexion « Se souvenir de moi »).
+        $seededUserMeta = fn (): array => [
+            'email_verified_at' => now(),
+            'is_active' => true,
+            'remember_token' => Str::random(60),
+        ];
 
-        // 1 Admin
-        $admin = User::create([
+        // 1 Admin (forceCreate : remember_token hors $fillable du modèle User)
+        $admin = User::forceCreate(array_merge([
             'name' => 'Admin System',
             'email' => 'admin@upfconnect.edu',
-            'password' => $password,
+            'password' => $plainPassword,
             'role' => 'admin',
             'bio' => 'Administrateur système de la plateforme UPFConnect.',
             'department' => 'IT',
-            'email_verified_at' => now(),
-        ]);
+        ], $seededUserMeta()));
         
         Profile::create([
             'user_id' => $admin->id,
@@ -41,15 +47,14 @@ class DatabaseSeeder extends Seeder
         // 5 Teachers
         $teachers = [];
         for ($i = 1; $i <= 5; $i++) {
-            $teacher = User::create([
+            $teacher = User::forceCreate(array_merge([
                 'name' => "Prof. " . $faker->lastName,
                 'email' => "teacher$i@upfconnect.edu",
-                'password' => $password,
+                'password' => $plainPassword,
                 'role' => 'teacher',
                 'bio' => $faker->realText(100),
                 'department' => $faker->randomElement(['Informatique', 'Mathématiques', 'Physique', 'Biologie', 'Lettres']),
-                'email_verified_at' => now(),
-            ]);
+            ], $seededUserMeta()));
             Profile::create([
                 'user_id' => $teacher->id,
                 'linkedin_url' => 'https://linkedin.com/in/' . $faker->slug,
@@ -61,15 +66,14 @@ class DatabaseSeeder extends Seeder
         // 30 Students
         $students = [];
         for ($i = 1; $i <= 30; $i++) {
-            $student = User::create([
+            $student = User::forceCreate(array_merge([
                 'name' => $faker->firstName . ' ' . $faker->lastName,
                 'email' => "student$i@upfconnect.edu",
-                'password' => $password,
+                'password' => $plainPassword,
                 'role' => 'student',
                 'bio' => $faker->realText(80),
                 'department' => $faker->randomElement(['Informatique', 'Mathématiques', 'Physique', 'Biologie', 'Lettres']),
-                'email_verified_at' => now(),
-            ]);
+            ], $seededUserMeta()));
             Profile::create([
                 'user_id' => $student->id,
                 'github_url' => 'https://github.com/' . $faker->userName,

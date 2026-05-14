@@ -84,7 +84,7 @@ class MessageController extends Controller
             'body'        => $request->body,
         ]);
 
-        return back();
+        return back()->with('success', 'Message envoyé.');
     }
 
     public function destroy(Message $message)

@@ -57,7 +57,8 @@ class AppServiceProvider extends ServiceProvider
                     ->take(3)
                     ->get();
 
-                // Suggestions de profil (connexions en commun)
+                // Suggestions de profil (connexions en commun) — limité + eager load pour éviter timeouts
+                // (l’ancienne version chargeait tous les utilisateurs et N requêtes de connexions).
                 $userConnections = $user->connectionsSent()
                     ->where('status', 'accepted')
                     ->pluck('receiver_id')
@@ -65,21 +66,28 @@ class AppServiceProvider extends ServiceProvider
                         $user->connectionsReceived()
                             ->where('status', 'accepted')
                             ->pluck('sender_id')
-                    );
+                    )
+                    ->unique()
+                    ->values();
 
-                $profileSuggestions = \App\Models\User::where('is_active', true)
+                $maxSuggestionCandidates = 120;
+
+                $profileSuggestions = \App\Models\User::query()
+                    ->where('is_active', true)
                     ->where('id', '!=', $user->id)
                     ->whereNotIn('id', $userConnections)
+                    ->with([
+                        'connectionsSent' => fn ($q) => $q->where('status', 'accepted'),
+                        'connectionsReceived' => fn ($q) => $q->where('status', 'accepted'),
+                    ])
+                    ->orderByDesc('id')
+                    ->limit($maxSuggestionCandidates)
                     ->get()
                     ->map(function ($suggestedUser) use ($userConnections) {
-                        $suggestedConnections = $suggestedUser->connectionsSent()
-                            ->where('status', 'accepted')
+                        $suggestedConnections = $suggestedUser->connectionsSent
                             ->pluck('receiver_id')
-                            ->merge(
-                                $suggestedUser->connectionsReceived()
-                                    ->where('status', 'accepted')
-                                    ->pluck('sender_id')
-                            );
+                            ->merge($suggestedUser->connectionsReceived->pluck('sender_id'))
+                            ->unique();
 
                         $commonConnections = $userConnections->intersect($suggestedConnections)->count();
 
@@ -88,9 +96,7 @@ class AppServiceProvider extends ServiceProvider
                             'common_connections_count' => $commonConnections,
                         ];
                     })
-                    ->filter(function ($suggestion) {
-                        return $suggestion['common_connections_count'] > 0;
-                    })
+                    ->filter(fn ($suggestion) => $suggestion['common_connections_count'] > 0)
                     ->sortByDesc('common_connections_count')
                     ->take(5)
                     ->values();

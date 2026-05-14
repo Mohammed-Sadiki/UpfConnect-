@@ -2,9 +2,14 @@
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl" style="color: #0f172a;">Événements universitaires</h2>
         @if(in_array(auth()->user()->role, ['admin', 'teacher']))
-        <button onclick="document.getElementById('event-modal').classList.remove('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition shadow-md">
-            Créer un événement
-        </button>
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('events.create') }}" class="rounded-full border border-blue-600 bg-white px-4 py-2 text-sm font-semibold text-blue-600 shadow-sm transition hover:bg-blue-50">
+                Formulaire complet
+            </a>
+            <button type="button" onclick="document.getElementById('event-modal').classList.remove('hidden')" class="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700">
+                Créer (rapide)
+            </button>
+        </div>
         @endif
     </div>
 
@@ -65,21 +70,28 @@
             </div>
             <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 p-4">
                 @csrf
+                @if($errors->any())
+                    <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                        <ul class="list-inside list-disc space-y-0.5">
+                            @foreach($errors->all() as $err)<li>{{ $err }}</li>@endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-800">Titre</label>
-                    <input type="text" name="title" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <input type="text" name="title" value="{{ old('title') }}" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-800">Date et heure</label>
-                    <input type="datetime-local" name="event_date" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <input type="datetime-local" name="event_date" value="{{ old('event_date') }}" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-800">Lieu</label>
-                    <input type="text" name="location" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <input type="text" name="location" value="{{ old('location') }}" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-800">Description</label>
-                    <textarea name="description" rows="3" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"></textarea>
+                    <textarea name="description" rows="3" required class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">{{ old('description') }}</textarea>
                 </div>
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-800">Image (optionnel)</label>
@@ -91,5 +103,13 @@
             </form>
         </div>
     </div>
+    @endif
+
+    @if($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('event-modal')?.classList.remove('hidden');
+            });
+        </script>
     @endif
 </x-app-layout>
