@@ -3,8 +3,8 @@
         {{-- Header --}}
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">Groupes</h1>
-                <p class="text-slate-500 mt-1">Rejoignez des communautés qui partagent vos intérêts</p>
+                <h1 class="text-2xl font-bold text-gray-900">Groupes</h1>
+                <p class="text-gray-600 mt-1">Rejoignez des communautés qui partagent vos intérêts</p>
             </div>
             <a href="{{ route('groups.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:from-cyan-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-all duration-200 shadow-lg shadow-cyan-500/25">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,7 +17,7 @@
         {{-- Mes Groupes --}}
         @if($myGroups->count() > 0)
             <div class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
@@ -25,7 +25,7 @@
                 </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($myGroups as $group)
-                        <a href="{{ route('groups.show', $group) }}" class="group block glass-card p-4 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <a href="{{ route('groups.show', $group) }}" class="group block bg-white p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200">
                             <div class="flex items-center space-x-4">
                                 <div class="flex-shrink-0">
                                     @if($group->image)
@@ -37,14 +37,14 @@
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="text-sm font-semibold text-slate-800 truncate group-hover:text-cyan-600 transition-colors">{{ $group->name }}</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">{{ $group->members_count }} membres</p>
+                                    <h3 class="text-sm font-semibold text-gray-900 truncate group-hover:text-cyan-600 transition-colors">{{ $group->name }}</h3>
+                                    <p class="text-xs text-gray-600 mt-0.5">{{ $group->members_count }} membres</p>
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-1
-                                        @if($group->category === 'academic') bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300
-                                        @elseif($group->category === 'club') bg-green-100 text-green-800 dark:bg-emerald-900/30 dark:text-emerald-300
-                                        @elseif($group->category === 'project') bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300
-                                        @elseif($group->category === 'career') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
-                                        @else bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300
+                                        @if($group->category === 'academic') bg-purple-100 text-purple-800
+                                        @elseif($group->category === 'club') bg-green-100 text-green-800
+                                        @elseif($group->category === 'project') bg-amber-100 text-amber-800
+                                        @elseif($group->category === 'career') bg-blue-100 text-blue-800
+                                        @else bg-gray-100 text-gray-800
                                         @endif">
                                         {{ $categories[$group->category] ?? $group->category }}
                                     </span>
@@ -57,15 +57,15 @@
         @endif
 
         {{-- Filtres et recherche --}}
-        <div class="glass-card p-4 shadow-sm mb-6">
+        <div class="bg-white p-4 shadow-md mb-6 border border-gray-200">
             <form method="GET" action="{{ route('groups.index') }}" class="flex flex-wrap gap-4 items-end">
                 <div class="flex-1 min-w-[200px]">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Rechercher</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nom du groupe..." class="w-full rounded-lg border-slate-300 focus:border-cyan-500 focus:ring-cyan-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nom du groupe..." class="w-full rounded-lg border-gray-300 focus:border-cyan-500 focus:ring-cyan-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Catégorie</label>
-                    <select name="category" class="rounded-lg border-slate-300 focus:border-cyan-500 focus:ring-cyan-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                    <select name="category" class="rounded-lg border-gray-300 focus:border-cyan-500 focus:ring-cyan-500">
                         <option value="">Toutes</option>
                         @foreach($categories as $key => $label)
                             <option value="{{ $key }}" {{ request('category') == $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -73,18 +73,18 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Visibilité</label>
-                    <select name="visibility" class="rounded-lg border-slate-300 focus:border-cyan-500 focus:ring-cyan-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Visibilité</label>
+                    <select name="visibility" class="rounded-lg border-gray-300 focus:border-cyan-500 focus:ring-cyan-500">
                         <option value="">Tous</option>
                         <option value="public" {{ request('visibility') == 'public' ? 'selected' : '' }}>Public</option>
                         <option value="private" {{ request('visibility') == 'private' ? 'selected' : '' }}>Privé</option>
                     </select>
                 </div>
-                <button type="submit" class="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors">
+                <button type="submit" class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
                     Filtrer
                 </button>
                 @if(request()->hasAny(['search', 'category', 'visibility']))
-                    <a href="{{ route('groups.index') }}" class="px-4 py-2 text-slate-600 hover:text-slate-800">
+                    <a href="{{ route('groups.index') }}" class="px-4 py-2 text-gray-600 hover:text-gray-900">
                         Réinitialiser
                     </a>
                 @endif
@@ -94,7 +94,7 @@
         {{-- Liste des groupes --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($groups as $group)
-                <div class="glass-card overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="bg-white overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200">
                     {{-- Cover/Header --}}
                     <div class="h-24 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 relative">
                         @if($group->visibility === 'private')
@@ -139,11 +139,11 @@
                                 </span>
                             </div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                @if($group->category === 'academic') bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300
-                                @elseif($group->category === 'club') bg-green-100 text-green-800 dark:bg-emerald-900/30 dark:text-emerald-300
-                                @elseif($group->category === 'project') bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300
-                                @elseif($group->category === 'career') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
-                                @else bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300
+                                @if($group->category === 'academic') bg-purple-100 text-purple-800
+                                @elseif($group->category === 'club') bg-green-100 text-green-800
+                                @elseif($group->category === 'project') bg-amber-100 text-amber-800
+                                @elseif($group->category === 'career') bg-blue-100 text-blue-800
+                                @else bg-gray-100 text-gray-800
                                 @endif">
                                 {{ $categories[$group->category] ?? $group->category }}
                             </span>

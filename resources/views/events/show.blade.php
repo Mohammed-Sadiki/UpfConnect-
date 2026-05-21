@@ -1,42 +1,48 @@
 <x-app-layout>
     <div class="mx-auto max-w-4xl px-4 pb-12 pt-2 sm:px-6 lg:px-8" style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
-        <article class="overflow-hidden glass-card shadow-[0_8px_30px_-8px_rgba(15,23,42,0.12)]">
+        <article class="overflow-hidden bg-white shadow-[0_8px_30px_-8px_rgba(15,23,42,0.12)] border border-gray-200">
             {{-- Bannière + badge date --}}
             <div class="relative h-56 sm:h-64 md:h-72">
                 @if($event->image)
                     <img src="{{ Str::startsWith($event->image, 'http') ? $event->image : asset('storage/'.$event->image) }}"
                         class="h-full w-full object-cover"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                         alt="">
+                    <div class="hidden flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600">
+                        <svg class="h-20 w-20 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
                 @else
-                    <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200">
-                        <svg class="h-20 w-20 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600">
+                        <svg class="h-20 w-20 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
                 @endif
 
-                <div class="absolute bottom-4 right-4 rounded-xl border border-slate-200/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-3 text-center shadow-lg sm:right-6 sm:bottom-5">
+                <div class="absolute bottom-4 right-4 rounded-xl border border-gray-200/80 bg-white/90 backdrop-blur-md px-4 py-3 text-center shadow-lg sm:right-6 sm:bottom-5">
                     <span class="block text-xs font-bold uppercase tracking-wide text-red-500">{{ $event->event_date->translatedFormat('M') }}</span>
-                    <span class="mt-0.5 block text-3xl font-bold leading-none text-slate-900">{{ $event->event_date->format('d') }}</span>
+                    <span class="mt-0.5 block text-3xl font-bold leading-none text-gray-900">{{ $event->event_date->format('d') }}</span>
                 </div>
             </div>
 
             <div class="px-5 pb-8 pt-8 sm:px-10 sm:pt-10">
-                <h1 class="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl">
+                <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-3xl">
                     {{ $event->title }}
                 </h1>
 
-                <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-slate-700">
+                <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-gray-700">
                     <span class="inline-flex items-center gap-1.5">
-                        <svg class="h-4 w-4 shrink-0 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <svg class="h-4 w-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         {{ $event->location }}
                     </span>
-                    <span class="hidden text-slate-300 sm:inline" aria-hidden="true">|</span>
+                    <span class="hidden text-gray-300 sm:inline" aria-hidden="true">|</span>
                     <span class="inline-flex items-center gap-1.5">
-                        <svg class="h-4 w-4 shrink-0 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <svg class="h-4 w-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         {{ $event->event_date->format('d/m/Y') }} à {{ $event->event_date->format('H:i') }}
@@ -45,7 +51,7 @@
 
                 @if(!empty($canEdit) && $canEdit)
                     <div class="mt-6 flex flex-wrap items-center gap-3">
-                        <a href="{{ route('events.edit', $event) }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50">
+                        <a href="{{ route('events.edit', $event) }}" class="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-gray-50">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             Modifier
                         </a>
@@ -60,35 +66,35 @@
                     </div>
                 @endif
 
-                <div class="mt-8 flex items-center gap-3 border-b border-slate-200 pb-8">
-                    <img class="h-12 w-12 shrink-0 rounded-full border-2 border-slate-100 object-cover ring-1 ring-slate-200"
+                <div class="mt-8 flex items-center gap-3 border-b border-gray-200 pb-8">
+                    <img class="h-12 w-12 shrink-0 rounded-full border-2 border-gray-100 object-cover ring-1 ring-gray-200"
                         src="{{ $event->creator->avatar ? asset('storage/'.$event->creator->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($event->creator->name).'&background=e2e8f0&color=0f172a&size=128' }}"
                         alt="">
                     <div>
-                        <p class="text-sm text-slate-800">
+                        <p class="text-sm text-gray-900">
                             Organisé par
                             <a href="{{ route('profile.show', $event->creator) }}" class="font-semibold text-blue-600 hover:text-blue-700 hover:underline">{{ $event->creator->name }}</a>
                         </p>
-                        <p class="mt-0.5 text-xs font-medium text-slate-600">{{ $event->creator->department }}</p>
+                        <p class="mt-0.5 text-xs font-medium text-gray-600">{{ $event->creator->department }}</p>
                     </div>
                 </div>
 
                 <section class="mt-8" aria-labelledby="event-desc-heading">
-                    <h2 id="event-desc-heading" class="text-lg font-bold text-slate-900 sm:text-xl">
+                    <h2 id="event-desc-heading" class="text-lg font-bold text-gray-900 sm:text-xl">
                         À propos de cet événement
                     </h2>
-                    <div class="mt-4 max-w-none text-base leading-relaxed text-slate-700">
+                    <div class="mt-4 max-w-none text-base leading-relaxed text-gray-700">
                         {!! nl2br(e($event->description)) !!}
                     </div>
                 </section>
 
-                <div class="mt-10 flex flex-col gap-6 rounded-xl bg-slate-800 px-5 py-5 text-slate-50 shadow-inner sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
+                <div class="mt-10 flex flex-col gap-6 rounded-xl bg-gray-800 px-5 py-5 text-gray-50 shadow-inner sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
                     <div>
-                        <p class="text-base font-bold text-slate-50">Participants ({{ $event->registrations->count() }})</p>
+                        <p class="text-base font-bold text-gray-50">Participants ({{ $event->registrations->count() }})</p>
                         <div class="mt-3 flex -space-x-2 overflow-hidden">
                             @foreach($event->registrations->take(10) as $reg)
                                 <a href="{{ route('profile.show', $reg->user) }}" class="relative z-0 inline-block hover:z-10" title="{{ $reg->user->name }}">
-                                    <img class="h-9 w-9 rounded-full border-2 border-slate-800 object-cover ring-2 ring-slate-600"
+                                    <img class="h-9 w-9 rounded-full border-2 border-gray-800 object-cover ring-2 ring-gray-600"
                                         src="{{ $reg->user->avatar ? asset('storage/'.$reg->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($reg->user->name).'&background=94a3b8&color=fff' }}"
                                         alt="">
                                 </a>

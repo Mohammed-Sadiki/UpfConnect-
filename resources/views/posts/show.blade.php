@@ -108,27 +108,26 @@
     </div>
 
     {{-- Commentaires --}}
-    <div class="rounded-2xl border border-white/50 shadow-lg overflow-hidden mb-6"
-         style="background:rgba(255,255,255,0.75); backdrop-filter:blur(16px)">
-        <div class="p-5 border-b border-slate-100">
-            <h3 class="font-bold text-slate-800">Commentaires ({{ $post->comments->count() }})</h3>
+    <div class="rounded-2xl border border-gray-200 shadow-md overflow-hidden mb-6 bg-white">
+        <div class="p-5 border-b border-gray-200">
+            <h3 class="font-bold text-gray-900">Commentaires ({{ $post->comments->count() }})</h3>
         </div>
 
         {{-- Formulaire commentaire --}}
-        <div class="p-5 border-b border-slate-100">
+        <div class="p-5 border-b border-gray-200">
             <form method="POST" action="{{ route('posts.comment', $post) }}" class="flex items-start space-x-3">
                 @csrf
-                <img class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0 mt-1"
+                <img class="w-9 h-9 rounded-full object-cover ring-2 ring-gray-200 flex-shrink-0 mt-1"
                      src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=8b5cf6&color=fff' }}"
                      alt="">
                 <div class="flex-1">
                     <textarea name="content" rows="2" required
                               placeholder="Écrire un commentaire..."
-                              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700
-                                     placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-cyan-400 transition resize-none"
+                              class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700
+                                     placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-cyan-400 transition resize-none"
                               style="--tw-ring-color:rgba(14,165,233,0.3)"></textarea>
                     <button type="submit"
-                            class="mt-2 px-4 py-1.5 text-sm font-semibold text-white rounded-xl transition shadow"
+                            class="mt-2 px-4 py-1.5 text-sm font-semibold text-white rounded-xl transition shadow-md"
                             style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
                         Publier
                     </button>
@@ -137,20 +136,20 @@
         </div>
 
         {{-- Liste commentaires --}}
-        <div class="divide-y divide-slate-100">
+        <div class="divide-y divide-gray-200">
             @forelse($post->comments->where('parent_id', null) as $comment)
             <div class="p-5 space-y-4">
                 {{-- Commentaire Parent --}}
                 <div class="flex items-start space-x-3">
-                    <img class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0"
+                    <img class="w-9 h-9 rounded-full object-cover ring-2 ring-gray-200 flex-shrink-0"
                          src="{{ $comment->user->avatar ? asset('storage/'.$comment->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($comment->user->name).'&background=8b5cf6&color=fff' }}"
                          alt="">
                     <div class="flex-1">
-                        <div class="bg-slate-50 rounded-xl px-4 py-2.5">
-                            <p class="text-sm font-semibold text-slate-800">{{ $comment->user->name }}</p>
-                            <p class="text-sm text-slate-600 mt-0.5">{{ $comment->content }}</p>
+                        <div class="bg-gray-50 rounded-xl px-4 py-2.5">
+                            <p class="text-sm font-semibold text-gray-900">{{ $comment->user->name }}</p>
+                            <p class="text-sm text-gray-600 mt-0.5">{{ $comment->content }}</p>
                         </div>
-                        <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1 ml-1">
+                        <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1 ml-1">
                             <span>{{ $comment->created_at->diffForHumans() }}</span>
                             <button onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')"
                                     class="font-semibold text-cyan-600 hover:underline">Répondre</button>
@@ -162,7 +161,7 @@
                                 @csrf
                                 <input type="hidden" name="parent_id" value="{{ $comment->id }}">
                                 <input type="text" name="content" required placeholder="Répondre à ce commentaire..."
-                                       class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:border-cyan-400 transition"
+                                       class="flex-1 bg-white border border-gray-300 rounded-xl px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:border-cyan-400 transition"
                                        style="--tw-ring-color:rgba(14,165,233,0.3)">
                                 <button type="submit" class="px-3 py-1.5 text-xs font-semibold text-white rounded-xl bg-cyan-600 hover:bg-cyan-700 transition shadow-sm">
                                     Répondre
@@ -174,16 +173,16 @@
 
                 {{-- Réponses (Imbriquées) --}}
                 @if($comment->replies->count() > 0)
-                <div class="ml-12 pl-4 border-l-2 border-slate-100 space-y-4">
+                <div class="ml-12 pl-4 border-l-2 border-gray-200 space-y-4">
                     @foreach($comment->replies as $reply)
                     <div class="flex items-start space-x-3">
-                        <img class="w-8 h-8 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0"
+                        <img class="w-8 h-8 rounded-full object-cover ring-2 ring-gray-200 flex-shrink-0"
                              src="{{ $reply->user->avatar ? asset('storage/'.$reply->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($reply->user->name).'&background=8b5cf6&color=fff' }}"
                              alt="">
-                        <div class="flex-1 bg-slate-50/50 rounded-xl px-3 py-2">
-                            <p class="text-xs font-semibold text-slate-800">{{ $reply->user->name }}</p>
-                            <p class="text-xs text-slate-600 mt-0.5">{{ $reply->content }}</p>
-                            <p class="text-[10px] text-slate-400 mt-1">{{ $reply->created_at->diffForHumans() }}</p>
+                        <div class="flex-1 bg-gray-50 rounded-xl px-3 py-2">
+                            <p class="text-xs font-semibold text-gray-900">{{ $reply->user->name }}</p>
+                            <p class="text-xs text-gray-600 mt-0.5">{{ $reply->content }}</p>
+                            <p class="text-[10px] text-gray-500 mt-1">{{ $reply->created_at->diffForHumans() }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -191,7 +190,7 @@
                 @endif
             </div>
             @empty
-            <div class="text-center py-8 text-slate-400 text-sm">
+            <div class="text-center py-8 text-gray-500 text-sm">
                 Aucun commentaire — soyez le premier !
             </div>
             @endforelse

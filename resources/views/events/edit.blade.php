@@ -5,7 +5,7 @@
             <a href="{{ route('events.show', $event) }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">Retour</a>
         </div>
 
-        <div class="glass-card rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-md">
             <form action="{{ route('events.update', $event) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('PATCH')

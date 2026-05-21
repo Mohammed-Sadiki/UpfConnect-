@@ -41,13 +41,13 @@
         <!-- Charts Row 1 -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- User Growth Chart -->
-            <div class="glass-card p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">📈 Croissance des Inscriptions</h3>
+            <div class="bg-white p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">📈 Croissance des Inscriptions</h3>
                 <div class="h-64"><canvas id="userGrowthChart"></canvas></div>
             </div>
             <!-- Post Activity Chart -->
-            <div class="glass-card p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">📝 Activité des Publications</h3>
+            <div class="bg-white p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">📝 Activité des Publications</h3>
                 <div class="h-64"><canvas id="postActivityChart"></canvas></div>
             </div>
         </div>
@@ -55,13 +55,13 @@
         <!-- Charts Row 2 -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <!-- Role Distribution -->
-            <div class="glass-card p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">🎯 Répartition par Rôle</h3>
+            <div class="bg-white p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Répartition par Rôle</h3>
                 <div class="h-48 flex items-center justify-center"><canvas id="roleChart"></canvas></div>
             </div>
             <!-- Daily Activity -->
-            <div class="glass-card p-6 shadow-sm lg:col-span-2">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Activité des 7 Derniers Jours</h3>
+            <div class="bg-white p-6 shadow-md lg:col-span-2 border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Activité des 7 Derniers Jours</h3>
                 <div class="h-48"><canvas id="dailyActivityChart"></canvas></div>
             </div>
         </div>
@@ -69,17 +69,17 @@
         <!-- Bottom Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Top Contributors -->
-            <div class="glass-card p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">🏆 Top Contributeurs</h3>
+            <div class="bg-white p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">🏆 Top Contributeurs</h3>
                 <div class="space-y-3">
                     @forelse($topContributors as $index => $contributor)
-                    <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/60 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">{{ $index + 1 }}</div>
                             <img src="{{ $contributor->avatar ? asset('storage/' . $contributor->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($contributor->name).'&background=3b82f6&color=fff' }}"
                                  class="w-10 h-10 rounded-full object-cover" alt="">
                             <div>
-                                <div class="font-medium text-gray-800">{{ $contributor->name }}</div>
+                                <div class="font-medium text-gray-900">{{ $contributor->name }}</div>
                                 <div class="text-xs text-gray-500">{{ $contributor->posts_count }} publications</div>
                             </div>
                         </div>
@@ -92,15 +92,15 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="glass-card p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">🔔 Activité Récente</h3>
+            <div class="bg-white p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">🔔 Activité Récente</h3>
                 <div class="space-y-3 max-h-80 overflow-y-auto">
                     @forelse($recentActivity as $activity)
-                    <div class="flex items-start space-x-3 p-3 {{ $activity['type'] === 'post' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-emerald-900/20' }} rounded-lg">
+                    <div class="flex items-start space-x-3 p-3 {{ $activity['type'] === 'post' ? 'bg-blue-50' : 'bg-green-50' }} rounded-lg">
                         <div class="w-2 h-2 rounded-full {{ $activity['type'] === 'post' ? 'bg-blue-500' : 'bg-green-500' }} mt-2"></div>
                         <div class="flex-1">
                             <div class="text-sm">
-                                <span class="font-semibold text-gray-800">{{ $activity['user'] }}</span>
+                                <span class="font-semibold text-gray-900">{{ $activity['user'] }}</span>
                                 <span class="text-gray-600">{{ $activity['action'] }}</span>
                             </div>
                             <div class="text-xs text-gray-400 mt-1">{{ $activity['time']->diffForHumans() }}</div>

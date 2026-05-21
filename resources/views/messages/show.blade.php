@@ -89,22 +89,22 @@
             </div>
         </div>
 
-        <div class="h-full flex overflow-hidden glass-card shadow-lg">
+        <div class="h-full flex overflow-hidden bg-white shadow-lg border border-gray-200">
 
             {{-- ===== SIDEBAR CONVERSATIONS ===== --}}
-            <div class="w-1/3 border-r border-slate-200 flex flex-col">
+            <div class="w-1/3 border-r border-gray-200 flex flex-col">
                 {{-- Header sidebar --}}
-                <div class="p-4 border-b border-slate-200"
+                <div class="p-4 border-b border-gray-200"
                     style="background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(139,92,246,0.12))">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center shadow"
                             style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                    d="M8 10h.01M12 10h.01M16 12h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
                         </div>
-                        <h2 class="text-base font-bold text-slate-800">Messagerie</h2>
+                        <h2 class="text-base font-bold text-gray-900">Messagerie</h2>
                     </div>
                 </div>
 
@@ -130,8 +130,8 @@
                             $isActive = isset($user) && $user->id === $sidebarOther->id;
                             $isUnread = !$sidebarMsg->read_at && $sidebarMsg->receiver_id === auth()->id();
                         @endphp
-                        <a href="{{ route('messages.show', $sidebarOther) }}" class="flex items-center p-4 border-b border-slate-100 transition-all duration-200
-                              {{ $isActive ? 'border-l-4 border-l-cyan-500' : 'hover:bg-slate-50' }}"
+                        <a href="{{ route('messages.show', $sidebarOther) }}" class="flex items-center p-4 border-b border-gray-200 transition-all duration-200
+                              {{ $isActive ? 'border-l-4 border-l-cyan-500' : 'hover:bg-gray-50' }}"
                             style="{{ $isActive ? 'background:rgba(14,165,233,0.08)' : '' }}">
                             <div class="relative flex-shrink-0">
                                 @if($sidebarOther->avatar)
@@ -149,16 +149,16 @@
                                         class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
                                 @endif
                                 <span
-                                    class="absolute -bottom-0.5 -right-0.5 w-3 h-3 {{ $sidebarOther->isOnline() ? 'bg-emerald-500' : 'bg-slate-300' }} rounded-full border-2 border-white" title="{{ $sidebarOther->isOnline() ? 'En ligne' : 'Hors ligne' }}"></span>
+                                    class="absolute -bottom-0.5 -right-0.5 w-3 h-3 {{ $sidebarOther->isOnline() ? 'bg-emerald-500' : 'bg-gray-300' }} rounded-full border-2 border-white" title="{{ $sidebarOther->isOnline() ? 'En ligne' : 'Hors ligne' }}"></span>
                             </div>
                             <div class="ml-3 flex-1 min-w-0">
                                 <div class="flex justify-between items-baseline">
-                                    <h3 class="font-semibold text-sm text-slate-800 truncate">{{ $sidebarOther->name }}</h3>
+                                    <h3 class="font-semibold text-sm text-gray-900 truncate">{{ $sidebarOther->name }}</h3>
                                     <span
-                                        class="text-[10px] text-slate-400 whitespace-nowrap ml-2">{{ $sidebarMsg->created_at->format('H:i') }}</span>
+                                        class="text-[10px] text-gray-400 whitespace-nowrap ml-2">{{ $sidebarMsg->created_at->format('H:i') }}</span>
                                 </div>
                                 <p
-                                    class="text-xs truncate mt-0.5 {{ $isUnread ? 'text-slate-700 font-semibold' : 'text-slate-500' }}">
+                                    class="text-xs truncate mt-0.5 {{ $isUnread ? 'text-gray-700 font-semibold' : 'text-gray-500' }}">
                                     @if($sidebarMsg->sender_id === auth()->id())
                                         <span class="text-cyan-600">Vous :</span>
                                     @endif
@@ -167,7 +167,7 @@
                             </div>
                         </a>
                     @empty
-                        <div class="p-6 text-center text-slate-400 text-sm">Aucune conversation</div>
+                        <div class="p-6 text-center text-gray-400 text-sm">Aucune conversation</div>
                     @endforelse
                 </div>
             </div>
@@ -177,7 +177,7 @@
                 @if(isset($user))
 
                     {{-- Header chat --}}
-                    <div class="p-4 border-b border-slate-200 flex items-center" style="background:rgba(255,255,255,0.8)">
+                    <div class="p-4 border-b border-gray-200 flex items-center" style="background:rgba(255,255,255,0.8)">
                         <div class="relative flex-shrink-0">
                             @if($user->avatar)
                                 <img class="h-11 w-11 rounded-full object-cover ring-2 ring-cyan-300"
@@ -189,20 +189,20 @@
                                 </div>
                             @endif
                             <span
-                                class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 {{ $user->isOnline() ? 'bg-emerald-500' : 'bg-slate-300' }} rounded-full border-2 border-white"></span>
+                                class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 {{ $user->isOnline() ? 'bg-emerald-500' : 'bg-gray-300' }} rounded-full border-2 border-white"></span>
                         </div>
                         <div class="ml-4">
-                            <h3 class="font-bold text-slate-800 text-base">{{ $user->name }}</h3>
-                            <p class="text-xs text-slate-500">
+                            <h3 class="font-bold text-gray-900 text-base">{{ $user->name }}</h3>
+                            <p class="text-xs text-gray-500">
                                 @if($user->department){{ $user->department }} • @endif
-                                <span class="{{ $user->isOnline() ? 'text-emerald-600 font-semibold' : 'text-slate-400' }}">
+                                <span class="{{ $user->isOnline() ? 'text-emerald-600 font-semibold' : 'text-gray-400' }}">
                                     {{ $user->isOnline() ? 'En ligne' : 'Hors ligne' }}
                                 </span>
                             </p>
                         </div>
                         <div class="ml-auto">
                             <a href="{{ route('profile.show', $user) }}"
-                                class="p-2 text-slate-400 hover:text-cyan-600 transition rounded-lg hover:bg-cyan-50"
+                                class="p-2 text-gray-400 hover:text-cyan-600 transition rounded-lg hover:bg-cyan-50"
                                 title="Voir profil">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -233,7 +233,7 @@
                             @if($showDate)
                                 <div class="flex justify-center my-3">
                                     <span
-                                        class="text-xs text-slate-500 bg-white px-4 py-1 rounded-full border border-slate-200 shadow-sm">
+                                        class="text-xs text-gray-500 bg-white px-4 py-1 rounded-full border border-gray-200 shadow-sm">
                                         @if($msg->created_at->isToday()) Aujourd'hui
                                         @elseif($msg->created_at->isYesterday()) Hier
                                         @else {{ $msg->created_at->format('d/m/Y') }}
@@ -253,7 +253,7 @@
                                         {{-- Bouton menu --}}
                                         <div class="relative flex-shrink-0">
                                             <button type="button" x-ref="menuBtn" @click.stop="toggleMenu()"
-                                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 mb-1">
+                                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 mb-1">
                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path
                                                         d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
@@ -262,12 +262,12 @@
                                             <div x-show="open" x-transition @click.away="open = false" x-cloak
                                                 x-ref="menuPanel"
                                                 :style="menuStyle"
-                                                class="fixed z-[10050] min-w-[13rem] rounded-xl border border-slate-100 bg-white py-1.5 font-sans antialiased text-[15px] leading-snug shadow-xl">
+                                                class="fixed z-[10050] min-w-[13rem] rounded-xl border border-gray-100 bg-white py-1.5 font-sans antialiased text-[15px] leading-snug shadow-xl">
                                                 {{-- Copier --}}
                                                 <button
                                                     onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; const r=this.closest('[x-data]'); setTimeout(()=>{ if(r&&window.Alpine) Alpine.$data(r).open=false },800) })"
-                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
-                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-gray-900 transition hover:bg-gray-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-gray-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -277,8 +277,8 @@
                                                 {{-- Transférer : pré-remplit le champ --}}
                                                 <button
                                                     onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
-                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
-                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-gray-900 transition hover:bg-gray-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-gray-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -288,15 +288,15 @@
                                                 {{-- Épingler --}}
                                                 <button
                                                     onclick="alert('Épinglé !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
-                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
-                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-gray-900 transition hover:bg-gray-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-gray-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                                                     </svg>
                                                     <span>Épingler</span>
                                                 </button>
-                                                <div class="border-t border-slate-100 my-1"></div>
+                                                <div class="border-t border-gray-100 my-1"></div>
                                                 {{-- Supprimer --}}
                                                 <button @click="openDelete('{{ route('messages.destroy', $msg) }}'); open=false"
                                                     class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-red-700 transition hover:bg-red-100">
@@ -324,7 +324,7 @@
                                             <p class="text-sm font-medium leading-relaxed">{{ $msg->body }}</p>
                                         </div>
                                     </div>
-                                    <span class="text-[10px] text-slate-400 mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</span>
+                                    <span class="text-[10px] text-gray-400 mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</span>
                                 </div>
                             @else
                                 {{-- Message reçu --}}
@@ -335,7 +335,7 @@
                                     @resize.window="open && positionMenu()">
                                     @if(!$isConsecutive)
                                         <div class="flex items-center mb-1.5 ml-1">
-                                            <img class="w-6 h-6 rounded-full mr-2 ring-1 ring-slate-200"
+                                            <img class="w-6 h-6 rounded-full mr-2 ring-1 ring-gray-200"
                                                 src="{{ $msg->sender->avatar ? asset('storage/' . $msg->sender->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($msg->sender->name) . '&background=8b5cf6&color=fff' }}"
                                                 alt="">
                                             <span class="text-xs text-purple-600 font-semibold">{{ $msg->sender->name }}</span>
@@ -343,14 +343,14 @@
                                     @endif
                                     <div class="flex items-end space-x-1.5 group w-full">
                                         {{-- Bulle message --}}
-                                        <div class="bg-white text-slate-700 px-4 py-2.5 border border-slate-200 shadow-sm break-words flex-1"
+                                        <div class="bg-white text-gray-700 px-4 py-2.5 border border-gray-200 shadow-sm break-words flex-1"
                                             style="border-radius: 4px 18px 18px 18px;">
-                                            <p class="text-sm font-medium text-slate-800 leading-relaxed">{{ $msg->body }}</p>
+                                            <p class="text-sm font-medium text-gray-900 leading-relaxed">{{ $msg->body }}</p>
                                         </div>
                                         {{-- Bouton menu --}}
                                         <div class="relative flex-shrink-0">
                                             <button type="button" x-ref="menuBtn" @click.stop="toggleMenu()"
-                                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 mb-1">
+                                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 mb-1">
                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path
                                                         d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
@@ -359,12 +359,12 @@
                                             <div x-show="open" x-transition @click.away="open = false" x-cloak
                                                 x-ref="menuPanel"
                                                 :style="menuStyle"
-                                                class="fixed z-[10050] min-w-[13rem] rounded-xl border border-slate-100 bg-white py-1.5 font-sans antialiased text-[15px] leading-snug shadow-xl">
+                                                class="fixed z-[10050] min-w-[13rem] rounded-xl border border-gray-100 bg-white py-1.5 font-sans antialiased text-[15px] leading-snug shadow-xl">
                                                 {{-- Copier --}}
                                                 <button
                                                     onclick="navigator.clipboard.writeText({{ json_encode($msg->body) }}).then(()=>{ this.innerHTML='<svg class=\'w-4 h-4 text-green-500\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg><span class=\'text-green-600\'>Copié !</span>'; const r=this.closest('[x-data]'); setTimeout(()=>{ if(r&&window.Alpine) Alpine.$data(r).open=false },800) })"
-                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
-                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-gray-900 transition hover:bg-gray-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-gray-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -374,8 +374,8 @@
                                                 {{-- Transférer --}}
                                                 <button
                                                     onclick="document.querySelector('input[name=body]').value = {{ json_encode('Transfert : ' . $msg->body) }}; document.querySelector('input[name=body]').focus(); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
-                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
-                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-gray-900 transition hover:bg-gray-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-gray-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -385,15 +385,15 @@
                                                 {{-- Épingler --}}
                                                 <button
                                                     onclick="alert('Épinglé !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
-                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-slate-800 transition hover:bg-slate-100">
-                                                    <svg class="w-5 h-5 shrink-0 text-slate-600" fill="none" stroke="currentColor"
+                                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-semibold text-gray-900 transition hover:bg-gray-100">
+                                                    <svg class="w-5 h-5 shrink-0 text-gray-600" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                                                     </svg>
                                                     <span>Épingler</span>
                                                 </button>
-                                                <div class="border-t border-slate-100 my-1"></div>
+                                                <div class="border-t border-gray-100 my-1"></div>
                                                 {{-- Signaler --}}
                                                 <button
                                                     onclick="alert('Message signalé. Merci !'); const r=this.closest('[x-data]'); if(r&&window.Alpine) Alpine.$data(r).open=false"
@@ -407,18 +407,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span class="text-[10px] text-slate-400 mt-1 ml-1">{{ $msg->created_at->format('H:i') }}</span>
+                                    <span class="text-[10px] text-gray-400 mt-1 ml-1">{{ $msg->created_at->format('H:i') }}</span>
                                 </div>
                             @endif
                         @endforeach
                     </div>
 
                     {{-- Formulaire envoi --}}
-                    <div class="p-4 border-t border-slate-200 bg-white">
+                    <div class="p-4 border-t border-gray-200 bg-white">
                         <form action="{{ route('messages.store', $user) }}" method="POST"
                             class="flex items-center space-x-3">
                             @csrf
-                            <input type="text" name="body" required placeholder="Écrire un message..." class="flex-1 bg-slate-50 border border-slate-200 rounded-full px-5 py-2.5 text-sm text-slate-700 placeholder-slate-400
+                            <input type="text" name="body" required placeholder="Écrire un message..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-5 py-2.5 text-sm text-gray-700 placeholder-gray-400
                                       focus:outline-none focus:ring-2 focus:border-cyan-400 transition"
                                 style="--tw-ring-color:rgba(14,165,233,0.3)">
                             <button type="submit"

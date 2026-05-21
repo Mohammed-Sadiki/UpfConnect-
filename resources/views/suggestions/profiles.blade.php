@@ -5,11 +5,11 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <!-- Header -->
-    <div class="glass-card p-6 mb-8">
+    <div class="bg-white p-6 mb-8 shadow-md border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-white mb-2">Suggestions de profil</h1>
-                <p class="text-gray-300">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Suggestions de profil</h1>
+                <p class="text-gray-600">
                     Découvrez des personnes avec qui vous avez des connexions en commun
                 </p>
             </div>
@@ -24,7 +24,7 @@
     @if($suggestions->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($suggestions as $suggestion)
-                <div class="glass-card p-6 hover:scale-105 transition-all duration-300">
+                <div class="bg-white p-6 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg border border-gray-200">
                     <!-- En-tête du profil -->
                     <div class="flex items-start space-x-4 mb-4">
                         <div class="relative">
@@ -47,17 +47,17 @@
                         </div>
                         
                         <div class="flex-1">
-                            <h3 class="text-white font-semibold text-lg">
+                            <h3 class="text-gray-900 font-semibold text-lg">
                                 {{ $suggestion['user']->name }}
                             </h3>
-                            <p class="text-gray-400 text-sm">
+                            <p class="text-gray-500 text-sm">
                                 {{ $suggestion['user']->role === 'student' ? 'Étudiant' : ($suggestion['user']->role === 'teacher' ? 'Enseignant' : 'Admin') }}
                             </p>
-                            <p class="text-gray-400 text-sm">
+                            <p class="text-gray-500 text-sm">
                                 {{ $suggestion['user']->department }}
                             </p>
                             @if($suggestion['user']->study_year)
-                                <p class="text-gray-400 text-sm">
+                                <p class="text-gray-500 text-sm">
                                     {{ $suggestion['user']->study_year }}ème année
                                 </p>
                             @endif
@@ -66,14 +66,14 @@
 
                     <!-- Bio -->
                     @if($suggestion['user']->bio)
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">
                             {{ $suggestion['user']->bio }}
                         </p>
                     @endif
 
                     <!-- Connexions en commun -->
                     <div class="mb-4">
-                        <div class="flex items-center text-green-400 text-sm mb-2">
+                        <div class="flex items-center text-green-600 text-sm mb-2">
                             <i class="fas fa-users mr-2"></i>
                             <span class="font-semibold">
                                 {{ $suggestion['common_connections_count'] }} 
@@ -105,7 +105,7 @@
                                 @endforeach
                                 
                                 @if($suggestion['common_connections_count'] > $suggestion['common_connections']->count())
-                                    <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center border-2 border-white/20">
+                                    <div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center border-2 border-white/20">
                                         <span class="text-white text-xs font-bold">
                                             +{{ $suggestion['common_connections_count'] - $suggestion['common_connections']->count() }}
                                         </span>
@@ -134,16 +134,16 @@
         </div>
     @else
         <!-- État vide -->
-        <div class="glass-card p-12 text-center">
+        <div class="bg-white p-12 text-center shadow-md border border-gray-200">
             <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center">
                 <i class="fas fa-users text-white text-3xl"></i>
             </div>
             
-            <h3 class="text-xl font-semibold text-white mb-3">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
                 Aucune suggestion pour le moment
             </h3>
             
-            <p class="text-gray-400 mb-6 max-w-md mx-auto">
+            <p class="text-gray-600 mb-6 max-w-md mx-auto">
                 Les suggestions de profil apparaissent lorsque vous avez des connexions en commun avec d'autres utilisateurs. 
                 Commencez par vous connecter avec d'autres personnes !
             </p>

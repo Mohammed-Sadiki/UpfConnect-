@@ -32,14 +32,14 @@
         @endphp
 
         <a href="{{ route('notifications.read', $notif->id) }}"
-           class="flex items-start p-4 rounded-2xl border transition group
+           class="flex items-start p-4 rounded-xl border transition group
                   {{ $isUnread
-                        ? 'bg-cyan-50/60 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800 hover:bg-cyan-50 dark:hover:bg-cyan-900/30'
-                        : 'glass-card border-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60' }}">
+                        ? 'bg-cyan-50 border-cyan-200 hover:bg-cyan-100 shadow-md'
+                        : 'bg-white border-gray-200 hover:bg-gray-50 shadow-sm hover:shadow-md' }}">
 
             {{-- Icône type --}}
             <div class="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center mr-4 shadow-sm
-                        {{ $isUnread ? 'bg-white dark:bg-slate-800 shadow-cyan-100' : 'bg-slate-100 dark:bg-slate-700' }}">
+                        {{ $isUnread ? 'bg-white shadow-cyan-200' : 'bg-gray-100' }}">
                 @if($notif->type === 'new_like')
                     <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
@@ -91,14 +91,14 @@
 
         @empty
         <div class="flex flex-col items-center py-20 text-center">
-            <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-5">
-                <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-5 shadow-md">
+                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                           d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                 </svg>
             </div>
-            <p class="text-slate-600 font-semibold">Aucune notification</p>
-            <p class="text-sm text-slate-400 mt-1">Vous êtes à jour !</p>
+            <p class="text-gray-900 font-semibold">Aucune notification</p>
+            <p class="text-sm text-gray-500 mt-1">Vous êtes à jour !</p>
         </div>
         @endforelse
     </div>

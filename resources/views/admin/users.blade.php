@@ -1,13 +1,13 @@
 <x-app-layout>
-    <div class="glass-card rounded-xl shadow-sm p-6 max-w-5xl mx-auto mt-10">
+    <div class="bg-white rounded-xl shadow-md p-6 max-w-5xl mx-auto mt-10 border border-gray-200">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Gestion des Utilisateurs</h2>
+            <h2 class="text-2xl font-bold text-gray-900">Gestion des Utilisateurs</h2>
             <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-500 hover:text-blue-600">← Retour au Dashboard</a>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-neutral-800 dark:text-gray-300">
+            <table class="w-full text-left text-sm text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-3">Utilisateur</th>
                         <th scope="col" class="px-6 py-3">Département</th>
@@ -18,8 +18,8 @@
                 </thead>
                 <tbody>
                     @foreach($users as $user)
-                    <tr class="border-b dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800">
-                        <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                    <tr class="border-b bg-white hover:bg-gray-50">
+                        <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
                             <img class="w-10 h-10 rounded-full" src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}">
                             <div class="pl-3">
                                 <div class="text-base font-semibold">{{ $user->name }}</div>
@@ -32,7 +32,7 @@
                         <td class="px-6 py-4">
                             <form action="{{ route('admin.users.updateRole', $user) }}" method="POST" class="flex items-center space-x-2">
                                 @csrf @method('PATCH')
-                                <select name="role" onchange="this.form.submit()" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white">
+                                <select name="role" onchange="this.form.submit()" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5">
                                     <option value="student" {{ $user->role === 'student' ? 'selected' : '' }}>Étudiant</option>
                                     <option value="teacher" {{ $user->role === 'teacher' ? 'selected' : '' }}>Professeur</option>
                                     <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>

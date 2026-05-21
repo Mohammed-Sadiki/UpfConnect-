@@ -7,7 +7,7 @@
 <x-app-layout>
     <div class="mx-auto max-w-4xl px-4 pb-12 pt-2 sm:px-6 lg:px-8" style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
         {{-- Carte profil principale --}}
-        <article class="overflow-hidden glass-card shadow-[0_4px_24px_-4px_rgba(15,23,42,0.08)]">
+        <article class="overflow-hidden bg-white shadow-[0_4px_24px_-4px_rgba(15,23,42,0.08)] border border-gray-200">
             {{-- Bannière --}}
             <div class="relative h-40 bg-[#2563eb] sm:h-48 md:h-52" aria-hidden="true">
                 <div class="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 opacity-95"></div>
@@ -40,7 +40,7 @@
                                     </button>
                                 </form>
                             @elseif($isConnected->status === 'pending')
-                                <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">En attente</span>
+                                <span class="rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-600">En attente</span>
                             @else
                                 <a href="{{ route('messages.show', $user) }}" class="inline-flex items-center justify-center rounded-full border-2 border-[#2563eb] bg-white px-5 py-2 text-sm font-semibold text-[#2563eb] transition hover:bg-blue-50">
                                     Message
@@ -125,21 +125,21 @@
 
         {{-- Activité --}}
         <section class="mt-10" aria-labelledby="activity-heading">
-            <h2 id="activity-heading" class="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-slate-500" style="font-family: system-ui, -apple-system, sans-serif;">
+            <h2 id="activity-heading" class="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-gray-500" style="font-family: system-ui, -apple-system, sans-serif;">
                 Activité
             </h2>
             <div class="space-y-4">
                 @forelse($user->posts as $post)
-                    <article class="glass-card p-5 shadow-[0_2px_12px_-2px_rgba(15,23,42,0.06)] transition hover:shadow-md sm:p-6">
+                    <article class="bg-white p-5 shadow-[0_2px_12px_-2px_rgba(15,23,42,0.06)] transition hover:shadow-md sm:p-6 border border-gray-200">
                         <div class="flex items-start justify-between gap-3">
                             <div class="min-w-0 flex-1">
-                                <p class="text-[15px] leading-relaxed text-slate-800">{!! nl2br(e($post->content)) !!}</p>
+                                <p class="text-[15px] leading-relaxed text-gray-900">{!! nl2br(e($post->content)) !!}</p>
                                 @if($post->image)
                                     <img src="{{ \Illuminate\Support\Str::startsWith($post->image, 'http') ? $post->image : asset('storage/'.$post->image) }}" class="mt-4 max-h-72 w-full rounded-xl object-cover" alt="" loading="lazy">
                                 @endif
                             </div>
                         </div>
-                        <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
+                        <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-gray-200 pt-3 text-xs text-gray-500">
                             <time datetime="{{ $post->created_at->toIso8601String() }}">{{ $post->created_at->translatedFormat('d M Y') }}</time>
                             <span aria-hidden="true">·</span>
                             <span>{{ $post->created_at->diffForHumans() }}</span>
@@ -154,8 +154,8 @@
                         </div>
                     </article>
                 @empty
-                    <div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 px-6 py-12 text-center">
-                        <p class="text-sm font-medium text-slate-600">Aucune activité publique pour le moment.</p>
+                    <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center">
+                        <p class="text-sm font-medium text-gray-600">Aucune activité publique pour le moment.</p>
                         @if(auth()->id() === $user->id)
                             <a href="{{ route('dashboard') }}" class="mt-3 inline-block text-sm font-semibold text-[#2563eb] hover:underline">Publier sur le fil</a>
                         @endif

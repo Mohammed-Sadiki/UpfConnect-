@@ -25,12 +25,13 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
-            --upf-base-bg: #f0f4f8;
-            --upf-surface: rgba(255, 255, 255, 0.7);
-            --upf-glass-border: rgba(255, 255, 255, 0.5);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --upf-navbar-bg: rgba(255, 255, 255, 0.85);
+            /* Modern Light Mode - Clean & Bright */
+            --upf-base-bg: #fafbfc;
+            --upf-surface: #ffffff;
+            --upf-glass-border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --upf-navbar-bg: rgba(255, 255, 255, 0.95);
             
             /* Brand fallback variables */
             --upf-blue: #1e3a8a;
@@ -40,10 +41,10 @@
             /* Accent variables */
             --upf-primary: #0ea5e9;
             --upf-secondary: #8b5cf6;
-            --upf-card-hover-border: rgba(14, 165, 233, 0.3);
-            --upf-shadow: rgba(14, 165, 233, 0.05);
-            --upf-primary-glow: rgba(14, 165, 233, 0.3);
-            --upf-primary-glow-hover: rgba(14, 165, 233, 0.5);
+            --upf-card-hover-border: #0ea5e9;
+            --upf-shadow: rgba(0, 0, 0, 0.08);
+            --upf-primary-glow: rgba(14, 165, 233, 0.15);
+            --upf-primary-glow-hover: rgba(14, 165, 233, 0.25);
         }
 
         /* Dark Mode overrides */
@@ -65,49 +66,48 @@
         [data-accent="default"] {
             --upf-primary: #0ea5e9;
             --upf-secondary: #8b5cf6;
-            --upf-card-hover-border: rgba(14, 165, 233, 0.3);
-            --upf-shadow: rgba(14, 165, 233, 0.05);
-            --upf-primary-glow: rgba(14, 165, 233, 0.3);
-            --upf-primary-glow-hover: rgba(14, 165, 233, 0.5);
+            --upf-card-hover-border: #0ea5e9;
+            --upf-shadow: rgba(0, 0, 0, 0.08);
+            --upf-primary-glow: rgba(14, 165, 233, 0.15);
+            --upf-primary-glow-hover: rgba(14, 165, 233, 0.25);
         }
 
         /* Theme Accents: Sunset (Orange/Rose) */
         [data-accent="sunset"] {
             --upf-primary: #f97316;
             --upf-secondary: #ec4899;
-            --upf-card-hover-border: rgba(249, 115, 22, 0.3);
-            --upf-shadow: rgba(249, 115, 22, 0.05);
-            --upf-primary-glow: rgba(249, 115, 22, 0.3);
-            --upf-primary-glow-hover: rgba(249, 115, 22, 0.5);
+            --upf-card-hover-border: #f97316;
+            --upf-shadow: rgba(0, 0, 0, 0.08);
+            --upf-primary-glow: rgba(249, 115, 22, 0.15);
+            --upf-primary-glow-hover: rgba(249, 115, 22, 0.25);
         }
 
         /* Theme Accents: Emerald (Mint/Teal) */
         [data-accent="emerald"] {
             --upf-primary: #10b981;
             --upf-secondary: #06b6d4;
-            --upf-card-hover-border: rgba(16, 185, 129, 0.3);
-            --upf-shadow: rgba(16, 185, 129, 0.05);
-            --upf-primary-glow: rgba(16, 185, 129, 0.3);
-            --upf-primary-glow-hover: rgba(16, 185, 129, 0.5);
+            --upf-card-hover-border: #10b981;
+            --upf-shadow: rgba(0, 0, 0, 0.08);
+            --upf-primary-glow: rgba(16, 185, 129, 0.15);
+            --upf-primary-glow-hover: rgba(16, 185, 129, 0.25);
         }
 
         /* Theme Accents: Crimson (Red/Gold) */
         [data-accent="crimson"] {
             --upf-primary: #dc2626;
             --upf-secondary: #d97706;
-            --upf-card-hover-border: rgba(220, 38, 38, 0.3);
-            --upf-shadow: rgba(220, 38, 38, 0.05);
-            --upf-primary-glow: rgba(220, 38, 38, 0.3);
-            --upf-primary-glow-hover: rgba(220, 38, 38, 0.5);
+            --upf-card-hover-border: #dc2626;
+            --upf-shadow: rgba(0, 0, 0, 0.08);
+            --upf-primary-glow: rgba(220, 38, 38, 0.15);
+            --upf-primary-glow-hover: rgba(220, 38, 38, 0.25);
         }
 
         * { font-family: 'Rajdhani', sans-serif; }
         body { 
             background-color: var(--upf-base-bg); 
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.04), transparent 30%),
-                radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.04), transparent 30%),
-                linear-gradient(to bottom, var(--upf-surface), var(--upf-base-bg));
+                radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.03), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.03), transparent 40%);
             background-attachment: fixed;
             color: var(--text-main); 
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -118,27 +118,17 @@
             color: var(--text-main) !important;
         }
 
-        /* Glassmorphism Cards */
+        /* Modern Cards - Clean & Elevated */
         .glass-card, .upf-card { 
             background: var(--upf-surface); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--upf-glass-border);
-            box-shadow: 0 8px 32px var(--upf-shadow), inset 0 0 15px rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            transition: all 0.2s ease;
         }
-        .upf-card::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
-            transform: skewX(-25deg); transition: all 0.7s;
-        }
-        .upf-card:hover::before { left: 200%; }
         .upf-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px var(--upf-primary-glow-hover), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
             border-color: var(--upf-card-hover-border);
         }
 
@@ -192,12 +182,27 @@
             font-weight: 600; font-size:1rem; font-family: 'Orbitron', sans-serif;
             text-transform: uppercase; letter-spacing: 1px;
             transition: all .3s; box-shadow: 0 4px 15px var(--upf-shadow);
-            position: relative; overflow: hidden;
         }
-        .btn-primary:hover { 
-            transform:translateY(-2px); 
-            box-shadow:0 6px 20px var(--upf-primary-glow-hover); 
-            color: #fff;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--upf-primary-glow-hover);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--upf-glass-border);
+            color: var(--text-main);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .glass-button:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--upf-primary);
         }
         .btn-red {
             background: linear-gradient(135deg, rgba(239,68,68,0.9), rgba(220,38,38,0.9));
@@ -345,30 +350,30 @@
         <form action="{{ route('search') }}" method="GET" class="hidden md:flex flex-1 max-w-sm mx-6">
             <div class="relative w-full">
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Rechercher des personnes, posts..."
-                    class="w-full bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-white/50 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:bg-white dark:focus:bg-white/20 transition border border-slate-200 dark:border-white/10">
-                <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400 dark:text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    class="w-full bg-gray-100 text-gray-800 placeholder-gray-400 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:bg-white transition border border-gray-200">
+                <svg class="w-4 h-4 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
         </form>
 
         <!-- Nav Links -->
         <div class="flex items-center space-x-1">
-            <a href="{{ route('dashboard') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-gray-100 transition {{ request()->routeIs('dashboard') ? 'nav-active' : '' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 <span class="text-[10px] font-medium">Accueil</span>
             </a>
-            <a href="{{ route('connections.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition {{ request()->routeIs('connections.*') ? 'nav-active' : '' }}">
+            <a href="{{ route('connections.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-gray-100 transition {{ request()->routeIs('connections.*') ? 'nav-active' : '' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
                 <span class="text-[10px] font-medium">Réseau</span>
             </a>
-            <a href="{{ route('events.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition {{ request()->routeIs('events.*') ? 'nav-active' : '' }}">
+            <a href="{{ route('events.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-gray-100 transition {{ request()->routeIs('events.*') ? 'nav-active' : '' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span class="text-[10px] font-medium">Événements</span>
             </a>
-            <a href="{{ route('groups.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition {{ request()->routeIs('groups.*') ? 'nav-active' : '' }}">
+            <a href="{{ route('groups.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-gray-100 transition {{ request()->routeIs('groups.*') ? 'nav-active' : '' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 <span class="text-[10px] font-medium">Groupes</span>
             </a>
-            <a href="{{ route('messages.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition {{ request()->routeIs('messages.*') ? 'nav-active' : '' }}">
+            <a href="{{ route('messages.index') }}" class="nav-link flex flex-col items-center px-3 py-1 rounded-lg hover:bg-gray-100 transition {{ request()->routeIs('messages.*') ? 'nav-active' : '' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                 <span class="text-[10px] font-medium">Messages</span>
             </a>
@@ -376,7 +381,7 @@
             <div x-data="{ open: false, tab: 'all' }" class="relative">
                 <button @click="open=!open" @click.stop
                         class="nav-link flex flex-col items-center px-3 py-1 rounded-lg transition relative"
-                        :class="open ? 'nav-active bg-slate-100 dark:bg-cyan-50/10' : 'hover:bg-slate-100 dark:hover:bg-white/10 {{ request()->routeIs('notifications.*') ? 'nav-active' : '' }}'">
+                        :class="open ? 'nav-active bg-gray-100' : 'hover:bg-gray-100 {{ request()->routeIs('notifications.*') ? 'nav-active' : '' }}'">
                     <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                          :style="open ? 'color:var(--upf-neon-blue)' : ''">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -472,7 +477,7 @@
 
             <!-- Theme Switcher -->
             <div x-data="{ open: false, mode: localStorage.getItem('theme-mode') || 'light', accent: localStorage.getItem('accent-theme') || 'default' }" class="relative ml-1">
-                <button @click="open=!open" class="flex items-center justify-center w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full transition border border-white/10 text-slate-800 dark:text-slate-200" title="Changer de thème">
+                <button @click="open=!open" class="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full transition border border-gray-200 text-gray-800" title="Changer de thème">
                     <!-- Light Icon -->
                     <svg class="w-5 h-5" :class="mode === 'dark' ? 'hidden' : 'block'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -483,36 +488,36 @@
                     </svg>
                 </button>
                 <div x-show="open" x-transition @click.away="open=false"
-                     class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-2xl py-2.5 z-50 border border-gray-100 dark:border-slate-800" style="display:none">
-                    <div class="px-3 pb-2 mb-2 border-b border-gray-100 dark:border-slate-800">
-                        <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Mode</span>
+                     class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl py-2.5 z-50 border border-gray-200" style="display:none">
+                    <div class="px-3 pb-2 mb-2 border-b border-gray-200">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Mode</span>
                         <div class="flex items-center justify-between mt-1">
-                            <button @click="mode='light'; setThemeMode('light')" :class="mode==='light' ? 'bg-cyan-500 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'" class="flex-1 py-1 text-xs font-semibold rounded mr-1 transition">
+                            <button @click="mode='light'; setThemeMode('light')" :class="mode==='light' ? 'bg-cyan-500 text-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'" class="flex-1 py-1 text-xs font-semibold rounded mr-1 transition">
                                 Clair
                             </button>
-                            <button @click="mode='dark'; setThemeMode('dark')" :class="mode==='dark' ? 'bg-cyan-500 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'" class="flex-1 py-1 text-xs font-semibold rounded transition">
+                            <button @click="mode='dark'; setThemeMode('dark')" :class="mode==='dark' ? 'bg-cyan-500 text-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'" class="flex-1 py-1 text-xs font-semibold rounded transition">
                                 Sombre
                             </button>
                         </div>
                     </div>
                     <div class="px-3">
-                        <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Couleur d'accent</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Couleur d'accent</span>
                         <div class="grid grid-cols-2 gap-1.5 mt-1.5">
-                            <button @click="accent='default'; setAccentTheme('default')" :class="accent==='default' ? 'ring-2 ring-cyan-400 bg-slate-50 dark:bg-slate-800' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
+                            <button @click="accent='default'; setAccentTheme('default')" :class="accent==='default' ? 'ring-2 ring-cyan-400 bg-gray-50' : 'hover:bg-gray-50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
                                 <span class="w-3 h-3 rounded-full bg-sky-500 flex-shrink-0"></span>
-                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Néon</span>
+                                <span class="text-[11px] font-semibold text-gray-700">Néon</span>
                             </button>
-                            <button @click="accent='sunset'; setAccentTheme('sunset')" :class="accent==='sunset' ? 'ring-2 ring-orange-400 bg-slate-50 dark:bg-slate-800' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
+                            <button @click="accent='sunset'; setAccentTheme('sunset')" :class="accent==='sunset' ? 'ring-2 ring-orange-400 bg-gray-50' : 'hover:bg-gray-50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
                                 <span class="w-3 h-3 rounded-full bg-orange-500 flex-shrink-0"></span>
-                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Sunset</span>
+                                <span class="text-[11px] font-semibold text-gray-700">Sunset</span>
                             </button>
-                            <button @click="accent='emerald'; setAccentTheme('emerald')" :class="accent==='emerald' ? 'ring-2 ring-emerald-400 bg-slate-50 dark:bg-slate-800' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
+                            <button @click="accent='emerald'; setAccentTheme('emerald')" :class="accent==='emerald' ? 'ring-2 ring-emerald-400 bg-gray-50' : 'hover:bg-gray-50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
                                 <span class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></span>
-                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Menthe</span>
+                                <span class="text-[11px] font-semibold text-gray-700">Menthe</span>
                             </button>
-                            <button @click="accent='crimson'; setAccentTheme('crimson')" :class="accent==='crimson' ? 'ring-2 ring-red-500 bg-slate-50 dark:bg-slate-800' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
+                            <button @click="accent='crimson'; setAccentTheme('crimson')" :class="accent==='crimson' ? 'ring-2 ring-red-500 bg-gray-50' : 'hover:bg-gray-50'" class="flex items-center space-x-1 px-2 py-1.5 rounded text-left transition">
                                 <span class="w-3 h-3 rounded-full bg-red-600 flex-shrink-0"></span>
-                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Crimson</span>
+                                <span class="text-[11px] font-semibold text-gray-700">Crimson</span>
                             </button>
                         </div>
                     </div>
@@ -537,41 +542,41 @@
 
             <!-- Profile dropdown -->
             <div x-data="{ open: false }" class="relative ml-1">
-                <button @click="open=!open" class="flex items-center space-x-2 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 rounded-full pl-1 pr-3 py-1 transition border border-slate-200 dark:border-white/10">
-                    <img class="w-7 h-7 rounded-full object-cover ring-2 ring-slate-200 dark:ring-white/30"
+                <button @click="open=!open" class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 rounded-full pl-1 pr-3 py-1 transition border border-gray-200">
+                    <img class="w-7 h-7 rounded-full object-cover ring-2 ring-gray-200"
                          src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=1a3a6b&color=fff' }}"
                          alt="">
-                    <span class="text-slate-700 dark:text-white text-xs font-medium hidden sm:block max-w-[80px] truncate">{{ auth()->user()->name }}</span>
-                    <svg class="w-3 h-3 text-slate-500 dark:text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <span class="text-gray-700 text-xs font-medium hidden sm:block max-w-[80px] truncate">{{ auth()->user()->name }}</span>
+                    <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div x-show="open" x-transition @click.away="open=false"
-                     class="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-xl shadow-2xl py-1 z-50 border border-gray-100 dark:border-slate-800" style="display:none">
-                    <div class="px-4 py-3 border-b border-gray-100 dark:border-slate-800">
-                        <p class="text-sm font-semibold text-gray-800 dark:text-slate-200">{{ auth()->user()->name }}</p>
-                        <p class="text-xs text-gray-500 dark:text-slate-400 capitalize">{{ auth()->user()->role }}</p>
+                     class="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl py-1 z-50 border border-gray-200" style="display:none">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <p class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500 capitalize">{{ auth()->user()->role }}</p>
                     </div>
-                    <a href="{{ route('profile.show', auth()->id()) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition">
+                    <a href="{{ route('profile.show', auth()->id()) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         Mon profil
                     </a>
-                    <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition">
+                    <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         Modifier le profil
                     </a>
-                    <a href="{{ route('suggestions.profiles') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 dark:hover:text-green-400 transition">
+                    <a href="{{ route('suggestions.profiles') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         Suggestions de profil
                     </a>
                     @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-slate-800 transition">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 transition">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                         Panel Admin
                     </a>
                     @endif
-                    <div class="border-t border-gray-100 dark:border-slate-800 mt-1">
+                    <div class="border-t border-gray-200 mt-1">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-800 transition">
+                            <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                                 Déconnexion
                             </button>
