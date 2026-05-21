@@ -24,7 +24,7 @@
                         <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                 @endif
-                <div class="absolute right-3 top-3 rounded-lg bg-white px-3 py-1 text-center shadow">
+                <div class="absolute right-3 top-3 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-3 py-1 text-center shadow">
                     <span class="block text-xs font-bold text-red-500 uppercase">{{ $event->event_date->translatedFormat('M') }}</span>
                     <span class="block text-lg font-bold leading-none text-slate-900">{{ $event->event_date->format('d') }}</span>
                 </div>

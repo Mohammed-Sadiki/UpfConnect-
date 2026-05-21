@@ -138,18 +138,57 @@
 
         {{-- Liste commentaires --}}
         <div class="divide-y divide-slate-100">
-            @forelse($post->comments as $comment)
-            <div class="flex items-start space-x-3 p-5">
-                <img class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0"
-                     src="{{ $comment->user->avatar ? asset('storage/'.$comment->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($comment->user->name).'&background=8b5cf6&color=fff' }}"
-                     alt="">
-                <div class="flex-1">
-                    <div class="bg-slate-50 rounded-xl px-4 py-2.5">
-                        <p class="text-sm font-semibold text-slate-800">{{ $comment->user->name }}</p>
-                        <p class="text-sm text-slate-600 mt-0.5">{{ $comment->content }}</p>
+            @forelse($post->comments->where('parent_id', null) as $comment)
+            <div class="p-5 space-y-4">
+                {{-- Commentaire Parent --}}
+                <div class="flex items-start space-x-3">
+                    <img class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0"
+                         src="{{ $comment->user->avatar ? asset('storage/'.$comment->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($comment->user->name).'&background=8b5cf6&color=fff' }}"
+                         alt="">
+                    <div class="flex-1">
+                        <div class="bg-slate-50 rounded-xl px-4 py-2.5">
+                            <p class="text-sm font-semibold text-slate-800">{{ $comment->user->name }}</p>
+                            <p class="text-sm text-slate-600 mt-0.5">{{ $comment->content }}</p>
+                        </div>
+                        <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1 ml-1">
+                            <span>{{ $comment->created_at->diffForHumans() }}</span>
+                            <button onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')"
+                                    class="font-semibold text-cyan-600 hover:underline">Répondre</button>
+                        </div>
+
+                        {{-- Formulaire de réponse caché --}}
+                        <div id="reply-form-{{ $comment->id }}" class="hidden mt-3">
+                            <form method="POST" action="{{ route('posts.comment', $post) }}" class="flex items-start space-x-2">
+                                @csrf
+                                <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                                <input type="text" name="content" required placeholder="Répondre à ce commentaire..."
+                                       class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:border-cyan-400 transition"
+                                       style="--tw-ring-color:rgba(14,165,233,0.3)">
+                                <button type="submit" class="px-3 py-1.5 text-xs font-semibold text-white rounded-xl bg-cyan-600 hover:bg-cyan-700 transition shadow-sm">
+                                    Répondre
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-400 mt-1 ml-1">{{ $comment->created_at->diffForHumans() }}</p>
                 </div>
+
+                {{-- Réponses (Imbriquées) --}}
+                @if($comment->replies->count() > 0)
+                <div class="ml-12 pl-4 border-l-2 border-slate-100 space-y-4">
+                    @foreach($comment->replies as $reply)
+                    <div class="flex items-start space-x-3">
+                        <img class="w-8 h-8 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0"
+                             src="{{ $reply->user->avatar ? asset('storage/'.$reply->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($reply->user->name).'&background=8b5cf6&color=fff' }}"
+                             alt="">
+                        <div class="flex-1 bg-slate-50/50 rounded-xl px-3 py-2">
+                            <p class="text-xs font-semibold text-slate-800">{{ $reply->user->name }}</p>
+                            <p class="text-xs text-slate-600 mt-0.5">{{ $reply->content }}</p>
+                            <p class="text-[10px] text-slate-400 mt-1">{{ $reply->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
             </div>
             @empty
             <div class="text-center py-8 text-slate-400 text-sm">

@@ -89,8 +89,7 @@
             </div>
         </div>
 
-        <div class="h-full flex overflow-hidden rounded-2xl border border-white/50 shadow-lg"
-            style="background:rgba(255,255,255,0.7); backdrop-filter:blur(16px);">
+        <div class="h-full flex overflow-hidden glass-card shadow-lg">
 
             {{-- ===== SIDEBAR CONVERSATIONS ===== --}}
             <div class="w-1/3 border-r border-slate-200 flex flex-col">
@@ -148,10 +147,9 @@
                                 @if($isUnread)
                                     <span
                                         class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
-                                @else
-                                    <span
-                                        class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                                 @endif
+                                <span
+                                    class="absolute -bottom-0.5 -right-0.5 w-3 h-3 {{ $sidebarOther->isOnline() ? 'bg-emerald-500' : 'bg-slate-300' }} rounded-full border-2 border-white" title="{{ $sidebarOther->isOnline() ? 'En ligne' : 'Hors ligne' }}"></span>
                             </div>
                             <div class="ml-3 flex-1 min-w-0">
                                 <div class="flex justify-between items-baseline">
@@ -191,11 +189,16 @@
                                 </div>
                             @endif
                             <span
-                                class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></span>
+                                class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 {{ $user->isOnline() ? 'bg-emerald-500' : 'bg-slate-300' }} rounded-full border-2 border-white"></span>
                         </div>
                         <div class="ml-4">
                             <h3 class="font-bold text-slate-800 text-base">{{ $user->name }}</h3>
-                            <p class="text-xs text-cyan-600">{{ $user->department }} • En ligne</p>
+                            <p class="text-xs text-slate-500">
+                                @if($user->department){{ $user->department }} • @endif
+                                <span class="{{ $user->isOnline() ? 'text-emerald-600 font-semibold' : 'text-slate-400' }}">
+                                    {{ $user->isOnline() ? 'En ligne' : 'Hors ligne' }}
+                                </span>
+                            </p>
                         </div>
                         <div class="ml-auto">
                             <a href="{{ route('profile.show', $user) }}"

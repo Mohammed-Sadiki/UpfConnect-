@@ -34,13 +34,12 @@
         <a href="{{ route('notifications.read', $notif->id) }}"
            class="flex items-start p-4 rounded-2xl border transition group
                   {{ $isUnread
-                        ? 'bg-cyan-50/60 border-cyan-200 hover:bg-cyan-50'
-                        : 'bg-white/70 border-slate-100 hover:bg-slate-50' }}"
-           style="backdrop-filter:blur(8px)">
+                        ? 'bg-cyan-50/60 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800 hover:bg-cyan-50 dark:hover:bg-cyan-900/30'
+                        : 'glass-card border-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60' }}">
 
             {{-- Icône type --}}
             <div class="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center mr-4 shadow-sm
-                        {{ $isUnread ? 'bg-white shadow-cyan-100' : 'bg-slate-100' }}">
+                        {{ $isUnread ? 'bg-white dark:bg-slate-800 shadow-cyan-100' : 'bg-slate-100 dark:bg-slate-700' }}">
                 @if($notif->type === 'new_like')
                     <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>

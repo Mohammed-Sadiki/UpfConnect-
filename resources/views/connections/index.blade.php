@@ -1,17 +1,17 @@
 <x-app-layout>
-    <div class="glass-card rounded-xl shadow-sm p-6">
-        <h2 class="mb-6 text-2xl font-bold tracking-tight text-slate-900" style="color: #0f172a;">Réseau & connexions</h2>
+    <div class="glass-card p-6 shadow-sm">
+        <h2 class="mb-6 text-2xl font-bold tracking-tight text-slate-900">Réseau & connexions</h2>
 
         @if($pendingRequests->count() > 0)
         <div class="mb-8">
             <h3 class="mb-4 text-lg font-bold text-slate-800">Invitations en attente ({{ $pendingRequests->count() }})</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @foreach($pendingRequests as $req)
-                <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white/80 p-4">
+                <div class="flex items-center justify-between p-4 upf-card">
                     <div class="flex items-center space-x-3">
                         <img class="h-12 w-12 rounded-full" src="{{ $req->sender->avatar ? asset('storage/' . $req->sender->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($req->sender->name) }}">
                         <div>
-                            <a href="{{ route('profile.show', $req->sender) }}" class="font-semibold text-slate-900 hover:text-blue-600" style="color: #0f172a;">{{ $req->sender->name }}</a>
+                            <a href="{{ route('profile.show', $req->sender) }}" class="font-semibold text-slate-900 hover:text-blue-600">{{ $req->sender->name }}</a>
                             <p class="text-xs font-medium text-slate-600">{{ $req->sender->department }}</p>
                         </div>
                     </div>
@@ -35,9 +35,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
             @foreach($connections as $conn)
                 @php $friend = $conn->sender_id === auth()->id() ? $conn->receiver : $conn->sender; @endphp
-                <div class="rounded-xl border border-slate-200 bg-white/80 p-4 text-center">
+                <div class="p-4 text-center upf-card">
                     <img class="mx-auto mb-3 h-16 w-16 rounded-full" src="{{ $friend->avatar ? asset('storage/'.$friend->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($friend->name).'&background=e2e8f0&color=0f172a' }}" alt="">
-                    <a href="{{ route('profile.show', $friend) }}" class="block font-semibold text-slate-900 hover:text-blue-600" style="color: #0f172a;">{{ $friend->name }}</a>
+                    <a href="{{ route('profile.show', $friend) }}" class="block font-semibold text-slate-900 hover:text-blue-600">{{ $friend->name }}</a>
                     <p class="mb-3 text-sm text-slate-600">{{ $friend->department }}</p>
                     <a href="{{ route('messages.show', $friend) }}" class="inline-block rounded-full border border-blue-600 px-4 py-1.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50">Message</a>
                 </div>
@@ -47,9 +47,9 @@
         <h3 class="mb-4 text-lg font-bold text-slate-800">Suggestions pour vous</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             @foreach($suggestions as $suggest)
-            <div class="rounded-xl border border-slate-200 bg-white/80 p-4 text-center">
+            <div class="p-4 text-center upf-card">
                 <img class="mx-auto mb-3 h-16 w-16 rounded-full" src="{{ $suggest->avatar ? asset('storage/'.$suggest->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($suggest->name).'&background=e2e8f0&color=0f172a' }}" alt="">
-                <a href="{{ route('profile.show', $suggest) }}" class="block font-semibold text-slate-900 hover:text-blue-600" style="color: #0f172a;">{{ $suggest->name }}</a>
+                <a href="{{ route('profile.show', $suggest) }}" class="block font-semibold text-slate-900 hover:text-blue-600">{{ $suggest->name }}</a>
                 <p class="mb-3 text-sm text-slate-600">{{ $suggest->department }}</p>
                 <form action="{{ route('connections.request', $suggest) }}" method="POST">
                     @csrf
@@ -61,4 +61,4 @@
             @endforeach
         </div>
     </div>
-</x-app-layout>
+</x-app-layout>>

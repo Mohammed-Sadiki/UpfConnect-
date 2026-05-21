@@ -21,7 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $fillable = [
         'name', 'email', 'password', 'role', 'bio', 'avatar', 
-        'department', 'is_active'
+        'department', 'is_active', 'last_seen_at'
     ];
 
     protected $hidden = [
@@ -35,7 +35,16 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'last_seen_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Check if user is currently online.
+     */
+    public function isOnline(): bool
+    {
+        return $this->last_seen_at && $this->last_seen_at->gt(now()->subMinutes(5));
     }
 
     public function sendEmailVerificationNotification(): void

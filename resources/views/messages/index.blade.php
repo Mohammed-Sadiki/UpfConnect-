@@ -18,7 +18,7 @@
         </div>
 
         @if($messages->count() > 0)
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 shadow-sm overflow-hidden">
+            <div class="glass-card shadow-sm overflow-hidden">
                 @foreach($messages as $msg)
                 @php
                     $other    = $msg->sender_id === auth()->id() ? $msg->receiver : $msg->sender;
@@ -46,9 +46,8 @@
                             <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
                                 <span class="text-white text-[8px] font-bold">!</span>
                             </span>
-                        @else
-                            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                         @endif
+                        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 {{ $other->isOnline() ? 'bg-emerald-500' : 'bg-slate-300' }} rounded-full border-2 border-white" title="{{ $other->isOnline() ? 'En ligne' : 'Hors ligne' }}"></span>
                     </div>
 
                     {{-- Infos --}}
@@ -79,7 +78,7 @@
             </div>
         @else
             {{-- État vide --}}
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 shadow-sm p-14 text-center">
+            <div class="glass-card shadow-sm p-14 text-center">
                 <div class="w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center shadow-lg"
                      style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6)">
                     <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -229,15 +229,29 @@ class PostController extends Controller
     {
         $request->validate([
             'content' => 'required|string|max:500',
+            'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        Comment::create([
+        $comment = Comment::create([
             'post_id' => $post->id,
             'user_id' => auth()->id(),
             'content' => $request->content,
+            'parent_id' => $request->parent_id,
         ]);
 
-        if ($post->user_id !== auth()->id()) {
+        if ($request->filled('parent_id')) {
+            $parentComment = Comment::find($request->parent_id);
+            if ($parentComment && $parentComment->user_id !== auth()->id()) {
+                \App\Models\Notification::create([
+                    'user_id' => $parentComment->user_id,
+                    'type'    => 'comment_reply',
+                    'data'    => [
+                        'message' => auth()->user()->name . ' a répondu à votre commentaire.',
+                        'post_id' => $post->id,
+                    ],
+                ]);
+            }
+        } elseif ($post->user_id !== auth()->id()) {
             \App\Models\Notification::create([
                 'user_id' => $post->user_id,
                 'type'    => 'new_comment',

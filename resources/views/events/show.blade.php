@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="mx-auto max-w-4xl px-4 pb-12 pt-2 sm:px-6 lg:px-8" style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
-        <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_-8px_rgba(15,23,42,0.12)]">
+        <article class="overflow-hidden glass-card shadow-[0_8px_30px_-8px_rgba(15,23,42,0.12)]">
             {{-- Bannière + badge date --}}
             <div class="relative h-56 sm:h-64 md:h-72">
                 @if($event->image)
@@ -15,14 +15,14 @@
                     </div>
                 @endif
 
-                <div class="absolute bottom-4 right-4 rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-center shadow-lg sm:right-6 sm:bottom-5">
+                <div class="absolute bottom-4 right-4 rounded-xl border border-slate-200/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-3 text-center shadow-lg sm:right-6 sm:bottom-5">
                     <span class="block text-xs font-bold uppercase tracking-wide text-red-500">{{ $event->event_date->translatedFormat('M') }}</span>
                     <span class="mt-0.5 block text-3xl font-bold leading-none text-slate-900">{{ $event->event_date->format('d') }}</span>
                 </div>
             </div>
 
             <div class="px-5 pb-8 pt-8 sm:px-10 sm:pt-10">
-                <h1 class="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl" style="color: #0f172a;">
+                <h1 class="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl">
                     {{ $event->title }}
                 </h1>
 
@@ -74,7 +74,7 @@
                 </div>
 
                 <section class="mt-8" aria-labelledby="event-desc-heading">
-                    <h2 id="event-desc-heading" class="text-lg font-bold text-slate-900 sm:text-xl" style="color: #0f172a;">
+                    <h2 id="event-desc-heading" class="text-lg font-bold text-slate-900 sm:text-xl">
                         À propos de cet événement
                     </h2>
                     <div class="mt-4 max-w-none text-base leading-relaxed text-slate-700">
@@ -84,7 +84,7 @@
 
                 <div class="mt-10 flex flex-col gap-6 rounded-xl bg-slate-800 px-5 py-5 text-slate-50 shadow-inner sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
                     <div>
-                        <p class="text-base font-bold text-slate-50" style="color: #f8fafc;">Participants ({{ $event->registrations->count() }})</p>
+                        <p class="text-base font-bold text-slate-50">Participants ({{ $event->registrations->count() }})</p>
                         <div class="mt-3 flex -space-x-2 overflow-hidden">
                             @foreach($event->registrations->take(10) as $reg)
                                 <a href="{{ route('profile.show', $reg->user) }}" class="relative z-0 inline-block hover:z-10" title="{{ $reg->user->name }}">

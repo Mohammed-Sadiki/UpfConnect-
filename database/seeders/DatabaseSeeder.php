@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Post;
@@ -12,158 +13,152 @@ use App\Models\Event;
 use App\Models\Connection;
 use App\Models\Message;
 use App\Models\Notification;
-use Faker\Factory as Faker;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create('fr_FR');
-        // Mot de passe en clair : le cast `hashed` sur User hache à l'enregistrement.
-        $plainPassword = 'password';
-        // Comptes seedés : e-mail vérifié + remember_token (comme après une connexion « Se souvenir de moi »).
-        $seededUserMeta = fn (): array => [
+        $pw = 'password';
+        $meta = fn() => [
             'email_verified_at' => now(),
-            'is_active' => true,
-            'remember_token' => Str::random(60),
+            'is_active'         => true,
+            'remember_token'    => Str::random(60),
         ];
 
-        // 1 Admin (forceCreate : remember_token hors $fillable du modèle User)
+        // ─── ADMIN ───────────────────────────────────────────────────────────
         $admin = User::forceCreate(array_merge([
-            'name' => 'Admin System',
-            'email' => 'admin@upfconnect.edu',
-            'password' => $plainPassword,
-            'role' => 'admin',
-            'bio' => 'Administrateur système de la plateforme UPFConnect.',
-            'department' => 'IT',
-        ], $seededUserMeta()));
-        
-        Profile::create([
-            'user_id' => $admin->id,
-            'skills' => ['Administration', 'Laravel', 'VueJS'],
-            'interests' => ['Tech', 'Networking']
-        ]);
+            'name'       => 'UPF University',
+            'email'      => 'admin@upf.pf',
+            'password'   => $pw,
+            'role'       => 'admin',
+            'bio'        => 'Compte officiel de l\'Université de la Polynésie Française. Bienvenue sur UPFConnect !',
+            'department' => 'Direction',
+        ], $meta()));
+        Profile::create(['user_id' => $admin->id, 'skills' => ['Administration', 'Communication'], 'interests' => ['Innovation', 'Éducation']]);
 
-        // 5 Teachers
+        // ─── TEACHERS ────────────────────────────────────────────────────────
+        $teacherData = [
+            ['Dr. Moana Tefaafana',  'moana.tefaafana@upf.pf',  'Informatique',   'Maître de conférences en IA et systèmes distribués. Passionné par la recherche appliquée.'],
+            ['Prof. Raiarii Hutihuti','raiarii.hutihuti@upf.pf', 'Mathématiques',  'Professeur agrégé en mathématiques. Spécialiste en algèbre et cryptographie.'],
+            ['Dr. Teiva Maraetaata', 'teiva.maraetaata@upf.pf',  'Physique',       'Docteur en physique quantique. Chercheur associé au CNRS.'],
+            ['Prof. Heimana Pihaatae','heimana.pihaatae@upf.pf', 'Droit',          'Professeur en droit international. Consultant juridique pour les institutions du Pacifique.'],
+            ['Dr. Vaite Narii',      'vaite.narii@upf.pf',       'Biologie',       'Biologiste marine, spécialiste des écosystèmes coralliens de Polynésie.'],
+        ];
+
         $teachers = [];
-        for ($i = 1; $i <= 5; $i++) {
-            $teacher = User::forceCreate(array_merge([
-                'name' => "Prof. " . $faker->lastName,
-                'email' => "teacher$i@upfconnect.edu",
-                'password' => $plainPassword,
-                'role' => 'teacher',
-                'bio' => $faker->realText(100),
-                'department' => $faker->randomElement(['Informatique', 'Mathématiques', 'Physique', 'Biologie', 'Lettres']),
-            ], $seededUserMeta()));
+        foreach ($teacherData as [$name, $email, $dept, $bio]) {
+            $t = User::forceCreate(array_merge([
+                'name' => $name, 'email' => $email, 'password' => $pw,
+                'role' => 'teacher', 'bio' => $bio, 'department' => $dept,
+            ], $meta()));
             Profile::create([
-                'user_id' => $teacher->id,
-                'linkedin_url' => 'https://linkedin.com/in/' . $faker->slug,
-                'skills' => ['Enseignement', 'Recherche', 'Pédagogie'],
+                'user_id'      => $t->id,
+                'linkedin_url' => 'https://linkedin.com/in/' . Str::slug($name),
+                'skills'       => ['Recherche', 'Enseignement', 'Publication'],
+                'interests'    => ['Science', 'Innovation'],
             ]);
-            $teachers[] = $teacher;
+            $teachers[] = $t;
         }
 
-        // 30 Students
+        // ─── STUDENTS ────────────────────────────────────────────────────────
+        $studentData = [
+            ['Teariki Manutahi',   'teariki.manutahi@etud.upf.pf',   'Informatique',  3, 'Passionné de développement web et d\'intelligence artificielle.'],
+            ['Heiura Tamatoa',     'heiura.tamatoa@etud.upf.pf',     'Informatique',  2, 'Étudiante en L2 info, amoureuse du open-source et du design.'],
+            ['Manea Teriitehau',   'manea.teriitehau@etud.upf.pf',   'Mathématiques', 4, 'En master de maths appliquées, avec une spécialité en data science.'],
+            ['Poerava Tefaafana',  'poerava.tefaafana@etud.upf.pf',  'Biologie',      1, 'Première année en bio marine. Plongée et sciences, ma vie.'],
+            ['Teva Mairau',        'teva.mairau@etud.upf.pf',        'Droit',         3, 'Futur avocat en droit de l\'environnement polynésien.'],
+            ['Roimata Vahine',     'roimata.vahine@etud.upf.pf',     'Informatique',  4, 'Développeuse full-stack, finaliste du hackathon Pacifique 2025.'],
+            ['Natea Bourgeois',    'natea.bourgeois@etud.upf.pf',    'Physique',      2, 'Curieux de tout ce qui touche à l\'astrophysique et à la cosmologie.'],
+            ['Hinanui Salmon',     'hinanui.salmon@etud.upf.pf',     'Informatique',  5, 'En master 2, je prépare ma thèse sur les réseaux de neurones.'],
+            ['Tuarii Paeore',      'tuarii.paeore@etud.upf.pf',      'Lettres',       2, 'Passionné de littérature francophone et de traduction.'],
+            ['Maeva Tehei',        'maeva.tehei@etud.upf.pf',        'Mathématiques', 1, 'L1 maths. J\'aime les problèmes complexes et les jeux logiques.'],
+        ];
+
         $students = [];
-        for ($i = 1; $i <= 30; $i++) {
-            $student = User::forceCreate(array_merge([
-                'name' => $faker->firstName . ' ' . $faker->lastName,
-                'email' => "student$i@upfconnect.edu",
-                'password' => $plainPassword,
-                'role' => 'student',
-                'bio' => $faker->realText(80),
-                'department' => $faker->randomElement(['Informatique', 'Mathématiques', 'Physique', 'Biologie', 'Lettres']),
-            ], $seededUserMeta()));
+        foreach ($studentData as [$name, $email, $dept, $year, $bio]) {
+            $s = User::forceCreate(array_merge([
+                'name' => $name, 'email' => $email, 'password' => $pw,
+                'role' => 'student', 'bio' => $bio, 'department' => $dept,
+            ], $meta()));
             Profile::create([
-                'user_id' => $student->id,
-                'github_url' => 'https://github.com/' . $faker->userName,
-                'skills' => ['PHP', 'HTML', 'CSS', 'JavaScript'],
-                'interests' => ['Web Dev', 'IA', 'Sports'],
-                'year_of_study' => $faker->numberBetween(1, 5)
+                'user_id'      => $s->id,
+                'github_url'   => 'https://github.com/' . Str::slug($name),
+                'skills'       => ['Travail en équipe', 'Recherche', $dept],
+                'interests'    => ['Tech', 'Culture polynésienne'],
+                'year_of_study'=> $year,
             ]);
-            $students[] = $student;
+            $students[] = $s;
         }
 
         $allUsers = array_merge([$admin], $teachers, $students);
 
-        // 50 Posts
-        $posts = [];
-        for ($i = 0; $i < 50; $i++) {
-            $user = $faker->randomElement($allUsers);
-            $posts[] = Post::create([
-                'user_id' => $user->id,
-                'title' => $faker->sentence,
-                'content' => $faker->paragraphs(3, true),
-                'image' => $faker->boolean(40) ? 'https://picsum.photos/800/400?random=' . $i : null,
-                'visibility' => $faker->randomElement(['public', 'university', 'private']),
-                'likes_count' => $faker->numberBetween(0, 50),
-            ]);
-        }
+        // ─── POSTS ───────────────────────────────────────────────────────────
+        $this->call(PostSeeder::class, false, [
+            'admin'    => $admin,
+            'teachers' => $teachers,
+            'students' => $students,
+            'allUsers' => $allUsers,
+        ]);
 
-        // 100+ Comments
-        for ($i = 0; $i < 120; $i++) {
-            $post = $faker->randomElement($posts);
-            $user = $faker->randomElement($allUsers);
-            Comment::create([
-                'post_id' => $post->id,
-                'user_id' => $user->id,
-                'content' => $faker->sentence,
-            ]);
-        }
+        // ─── EVENTS ──────────────────────────────────────────────────────────
+        $events = [
+            [$teachers[0], 'Conférence IA & Pacifique 2026', 'Une journée dédiée aux avancées de l\'intelligence artificielle dans le Pacifique. Intervenants locaux et internationaux.', 'Amphithéâtre A', '+15 days'],
+            [$teachers[1], 'Séminaire Cryptographie Appliquée', 'Introduction à la cryptographie post-quantique et ses applications dans la sécurité des données.', 'Salle 201', '+20 days'],
+            [$teachers[2], 'Nuit des étoiles — Observation au télescope', 'Soirée observation astronomique organisée par le département de physique. Ouverte à tous.', 'Toit du bâtiment B', '+7 days'],
+            [$teachers[3], 'Forum Droit & Environnement', 'Table ronde sur la protection juridique des lagons polynésiens. Avec des experts du PNUE.', 'Amphithéâtre B', '+30 days'],
+            [$teachers[4], 'Atelier Récifs Coralliens', 'Sortie terrain sur le lagon de Tahiti : observation, collecte de données et analyse en groupe.', 'Lagon de Papeete', '+10 days'],
+            [$admin,        'Journée Portes Ouvertes UPF 2026', 'Découvrez tous les cursus, rencontrez les enseignants et visitez le campus. Inscription gratuite.', 'Campus de Outumaoro', '+45 days'],
+        ];
 
-        // 20 Events
-        for ($i = 0; $i < 20; $i++) {
-            $teacher = $faker->randomElement($teachers);
+        foreach ($events as [$user, $title, $desc, $loc, $offset]) {
             Event::create([
-                'user_id' => $teacher->id,
-                'title' => 'Événement: ' . $faker->catchPhrase,
-                'description' => $faker->realText(200),
-                'location' => $faker->randomElement(['Amphi A', 'Amphi B', 'Salle 101', 'Bibliothèque', 'En ligne']),
-                'event_date' => $faker->dateTimeBetween('now', '+2 months'),
-                'image' => $faker->boolean(50) ? 'https://picsum.photos/600/300?random=' . $i : null,
+                'user_id'     => $user->id,
+                'title'       => $title,
+                'description' => $desc,
+                'location'    => $loc,
+                'event_date'  => now()->modify($offset),
+                'image'       => 'https://picsum.photos/800/400?random=' . rand(100, 999),
             ]);
         }
 
-        // Connections & Messages
-        for ($i = 0; $i < 50; $i++) {
-            $sender = $faker->randomElement($students);
-            $receiver = $faker->randomElement($students);
-            if ($sender->id !== $receiver->id) {
-                Connection::firstOrCreate(
-                    [
-                        'sender_id' => min($sender->id, $receiver->id),
-                        'receiver_id' => max($sender->id, $receiver->id)
-                    ],
-                    ['status' => $faker->randomElement(['pending', 'accepted'])]
-                );
+        // ─── CONNECTIONS ─────────────────────────────────────────────────────
+        $pairs = [];
+        // Teacher-Student connections
+        foreach ($teachers as $t) {
+            foreach (array_slice($students, 0, 6) as $s) {
+                $key = min($t->id, $s->id) . '-' . max($t->id, $s->id);
+                if (!isset($pairs[$key])) {
+                    Connection::create(['sender_id' => $t->id, 'receiver_id' => $s->id, 'status' => 'accepted']);
+                    $pairs[$key] = true;
+                }
             }
         }
-        
-        for ($i = 0; $i < 40; $i++) {
-            $sender = $faker->randomElement($allUsers);
-            $receiver = $faker->randomElement($allUsers);
-            if ($sender->id !== $receiver->id) {
-                Message::create([
-                    'sender_id' => $sender->id,
-                    'receiver_id' => $receiver->id,
-                    'body' => $faker->sentence,
-                    'read_at' => $faker->boolean(70) ? now() : null,
-                ]);
+        // Student-Student connections
+        foreach ($students as $i => $s1) {
+            foreach ($students as $j => $s2) {
+                if ($i >= $j) continue;
+                $key = min($s1->id, $s2->id) . '-' . max($s1->id, $s2->id);
+                if (!isset($pairs[$key]) && rand(0, 1)) {
+                    Connection::create(['sender_id' => $s1->id, 'receiver_id' => $s2->id, 'status' => rand(0,3) ? 'accepted' : 'pending']);
+                    $pairs[$key] = true;
+                }
             }
         }
 
-        // Notifications
-        for ($i = 0; $i < 30; $i++) {
-            $user = $faker->randomElement($allUsers);
-            Notification::create([
-                'user_id' => $user->id,
-                'type' => 'new_like',
-                'data' => ['message' => 'Quelqu\'un a aimé votre post.'],
-                'read_at' => $faker->boolean(50) ? now() : null,
-            ]);
+        // ─── MESSAGES ────────────────────────────────────────────────────────
+        $msgData = [
+            [$students[0], $teachers[0], 'Bonjour Dr. Tefaafana, est-ce que votre cours de demain est maintenu ?'],
+            [$teachers[0], $students[0], 'Oui bien sûr, rendez-vous en salle 104 à 8h30.'],
+            [$students[1], $students[5], 'Tu as fini le projet de base de données ?'],
+            [$students[5], $students[1], 'Presque ! Je bute sur la partie requêtes imbriquées. On se voit demain ?'],
+            [$students[2], $teachers[1], 'Professeur, pouvez-vous relire mon chapitre 3 de mémoire ?'],
+            [$teachers[1], $students[2], 'Envoyez-le moi par mail, je vous retourne mes remarques sous 48h.'],
+        ];
+        foreach ($msgData as [$sender, $receiver, $body]) {
+            Message::create(['sender_id' => $sender->id, 'receiver_id' => $receiver->id, 'body' => $body, 'read_at' => now()]);
         }
 
-        // Groups
+        // ─── GROUPS ──────────────────────────────────────────────────────────
         $this->call(GroupSeeder::class);
     }
 }

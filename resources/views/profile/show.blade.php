@@ -7,7 +7,7 @@
 <x-app-layout>
     <div class="mx-auto max-w-4xl px-4 pb-12 pt-2 sm:px-6 lg:px-8" style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
         {{-- Carte profil principale --}}
-        <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(15,23,42,0.08)]">
+        <article class="overflow-hidden glass-card shadow-[0_4px_24px_-4px_rgba(15,23,42,0.08)]">
             {{-- Bannière --}}
             <div class="relative h-40 bg-[#2563eb] sm:h-48 md:h-52" aria-hidden="true">
                 <div class="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 opacity-95"></div>
@@ -52,7 +52,7 @@
 
                 {{-- Identité --}}
                 <div class="mt-5 sm:mt-6">
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl" style="color: #0f172a; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                         {{ $user->name }}
                     </h1>
                     @if($user->bio)
@@ -130,7 +130,7 @@
             </h2>
             <div class="space-y-4">
                 @forelse($user->posts as $post)
-                    <article class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_2px_12px_-2px_rgba(15,23,42,0.06)] transition hover:border-slate-300 hover:shadow-md sm:p-6">
+                    <article class="glass-card p-5 shadow-[0_2px_12px_-2px_rgba(15,23,42,0.06)] transition hover:shadow-md sm:p-6">
                         <div class="flex items-start justify-between gap-3">
                             <div class="min-w-0 flex-1">
                                 <p class="text-[15px] leading-relaxed text-slate-800">{!! nl2br(e($post->content)) !!}</p>
@@ -154,7 +154,7 @@
                         </div>
                     </article>
                 @empty
-                    <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-6 py-12 text-center">
+                    <div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 px-6 py-12 text-center">
                         <p class="text-sm font-medium text-slate-600">Aucune activité publique pour le moment.</p>
                         @if(auth()->id() === $user->id)
                             <a href="{{ route('dashboard') }}" class="mt-3 inline-block text-sm font-semibold text-[#2563eb] hover:underline">Publier sur le fil</a>

@@ -6,7 +6,7 @@
                  src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                  alt="Avatar">
             <button onclick="document.getElementById('post-modal').classList.remove('hidden')"
-                    class="flex-1 text-left bg-gray-100 hover:bg-gray-200 transition rounded-full px-5 py-3 text-sm text-gray-500 font-medium">
+                    class="flex-1 text-left bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition rounded-full px-5 py-3 text-sm text-slate-500 dark:text-slate-400 font-medium">
                 Commencer un post...
             </button>
         </div>
@@ -57,10 +57,10 @@
                         <button @click="open = !open" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                         </button>
-                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-md shadow-lg ring-1 ring-black/10 dark:ring-white/10 z-10">
                             <form action="{{ route('posts.destroy', $post) }}" method="POST">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</button>
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-slate-700">Supprimer</button>
                             </form>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
             </div>
 
             <!-- Comments Section -->
-            <div id="comments-{{ $post->id }}" class="hidden border-t border-gray-100 bg-gray-50">
+            <div id="comments-{{ $post->id }}" class="hidden border-t border-gray-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                 <div class="px-4 pt-3 pb-2">
                     <form action="{{ route('posts.comment', $post) }}" method="POST" class="flex space-x-2">
                         @csrf
@@ -116,23 +116,23 @@
                              src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                              alt="">
                         <input type="text" name="content" required placeholder="Ajouter un commentaire..."
-                               class="flex-1 bg-white border border-gray-200 rounded-full px-4 text-sm focus:outline-none focus:border-blue-500">
+                               class="flex-1 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-slate-800 dark:text-slate-200 rounded-full px-4 text-sm focus:outline-none focus:border-blue-500">
                         <button type="submit" class="text-blue-600 font-semibold text-sm px-2 hover:text-blue-800 transition">Publier</button>
                     </form>
                 </div>
                 <div class="px-4 pb-4 space-y-3">
-                    @foreach($post->comments->take(3) as $comment)
+                    @foreach($post->comments->where('parent_id', null)->take(3) as $comment)
                     <div class="flex space-x-2">
                         <img class="h-8 w-8 rounded-full object-cover flex-shrink-0 mt-1"
                              src="{{ $comment->user->avatar ? asset('storage/'.$comment->user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($comment->user->name).'&background=3b82f6&color=fff' }}"
                              alt="">
-                        <div class="bg-white border border-gray-100 px-3 py-2 rounded-2xl flex-1">
+                        <div class="bg-white dark:bg-slate-700 border border-gray-100 dark:border-slate-600 px-3 py-2 rounded-2xl flex-1">
                             <div class="flex justify-between items-start">
                                 <a href="{{ route('profile.show', $comment->user) }}"
-                                   class="font-semibold text-xs text-gray-900 hover:text-blue-600">{{ $comment->user->name }}</a>
+                                   class="font-semibold text-xs text-gray-900 dark:text-slate-200 hover:text-blue-600">{{ $comment->user->name }}</a>
                                 <span class="text-[10px] text-gray-400">{{ $comment->created_at->diffForHumans() }}</span>
                             </div>
-                            <p class="text-sm mt-0.5 text-gray-800">{{ $comment->content }}</p>
+                            <p class="text-sm mt-0.5 text-gray-800 dark:text-slate-300">{{ $comment->content }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -227,11 +227,11 @@
     <!-- Post Creation Modal -->
     <div id="post-modal" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm overflow-y-auto">
         <div class="flex justify-center pt-10 pb-4 min-h-full">
-            <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden h-fit">
-            <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-900" style="color: #0f172a;">Créer un post</h3>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden h-fit">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Créer un post</h3>
                 <button onclick="document.getElementById('post-modal').classList.add('hidden')"
-                        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-1.5 transition">
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full p-1.5 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -242,9 +242,9 @@
                          src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
                          alt="">
                     <div>
-                        <span class="font-semibold text-slate-900" style="color: #0f172a;">{{ auth()->user()->name }}</span>
+                        <span class="font-semibold text-slate-900 dark:text-slate-100">{{ auth()->user()->name }}</span>
                         <div class="mt-1">
-                            <select name="visibility" class="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <select name="visibility" class="rounded-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                                 <option value="public">🌍 Tout le monde</option>
                                 <option value="university">🎓 Mon université</option>
                                 <option value="private">🔒 Privé</option>

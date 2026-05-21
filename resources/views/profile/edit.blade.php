@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="mx-auto mt-8 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 class="mb-6 text-2xl font-bold text-slate-900" style="color: #0f172a;">Modifier le profil</h2>
+    <div class="mx-auto mt-8 max-w-2xl glass-card p-6 shadow-sm sm:p-8">
+        <h2 class="mb-6 text-2xl font-bold text-slate-900">Modifier le profil</h2>
 
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
@@ -20,13 +20,13 @@
             <div>
                 <label for="edit-name" class="mb-1.5 block text-sm font-semibold text-slate-800">Nom complet</label>
                 <input id="edit-name" type="text" name="name" value="{{ old('name', $user->name) }}" required
-                    class="mt-0 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    class="mt-0 block w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
             </div>
 
             <div>
                 <label for="edit-bio" class="mb-1.5 block text-sm font-semibold text-slate-800">Bio / Titre</label>
                 <textarea id="edit-bio" name="bio" rows="4"
-                    class="mt-0 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">{{ old('bio', $user->bio) }}</textarea>
+                    class="mt-0 block w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">{{ old('bio', $user->bio) }}</textarea>
             </div>
 
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
